@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Split ecosystem/<Org>/<repo> into a standalone branch split/<Org>/<repo>,
+# Split Geometric_Engine/ecosystem/<Org>/<repo> into a standalone branch split/<Org>/<repo>,
 # preserving its history, ready to push to github.com/<Org>/<repo>.
 #
-#   ecosystem/scripts/split.sh SHD-CCP/geometric-engine-spec
+#   Geometric_Engine/ecosystem/scripts/split.sh SHD-CCP/geometric-engine-spec
 set -euo pipefail
 
 target="${1:?usage: $0 <Org>/<repo>}"
 root="$(git rev-parse --show-toplevel)"
-prefix="ecosystem/${target}"
+prefix="Geometric_Engine/ecosystem/${target}"
 
 if [[ ! -d "${root}/${prefix}" ]]; then
   echo "no such folder: ${prefix}" >&2

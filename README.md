@@ -14,7 +14,7 @@ The protocol, the reference engine, the language bindings, the application layer
 | 3 | `BioChain-AI/biochain` | Application and governance platform |
 | 4 | `Owl-Academy/geometric-engine-course` | Livebooks, simulators, walkthroughs |
 
-These repositories are currently staged under [`ecosystem/`](ecosystem/). See [`ecosystem/README.md`](ecosystem/README.md) for the architecture, the conformance pipeline and how to split each folder into its own repo.
+These repositories are currently staged under [`Geometric_Engine/ecosystem/`](Geometric_Engine/ecosystem/). See [`Geometric_Engine/ecosystem/README.md`](Geometric_Engine/ecosystem/README.md) for the architecture, the conformance pipeline and how to split each folder into its own repo.
 
 *The Geometric Engine of Time* is the title of the chronometric 5-tier orbital calculator module inside the engine (RFC 05).
 

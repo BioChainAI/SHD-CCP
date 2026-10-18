@@ -1,8 +1,8 @@
 # Ecosystem staging area
 
-This directory scaffolds the **5-layer federated architecture**. Every folder `ecosystem/<Org>/<repo>/` is a complete, self-contained repository: it has its own README, LICENSE, manifest, tests and `.github/workflows/`. Each one is ready to be split out into `github.com/<Org>/<repo>`.
+This directory scaffolds the **5-layer federated architecture**. Every folder `Geometric_Engine/ecosystem/<Org>/<repo>/` is a complete, self-contained repository: it has its own README, LICENSE, manifest, tests and `.github/workflows/`. Each one is ready to be split out into `github.com/<Org>/<repo>`.
 
-The root workflow [`ecosystem-conformance.yml`](../.github/workflows/ecosystem-conformance.yml) runs every binding against the spec vectors while they live together here. After a split, each repo's own `ci.yml` takes over.
+The root workflow [`ecosystem-conformance.yml`](../../.github/workflows/ecosystem-conformance.yml) runs every binding against the spec vectors while they live together here. After a split, each repo's own `ci.yml` takes over.
 
 ## Layers
 
@@ -44,7 +44,7 @@ Each binding looks for the spec at `$GE_SPEC_DIR`, then `./spec` (the submodule 
 2. Split the folder, history included, and push it:
 
    ```sh
-   ecosystem/scripts/split.sh SHD-CCP/geometric-engine-spec
+   Geometric_Engine/ecosystem/scripts/split.sh SHD-CCP/geometric-engine-spec
    git push git@github.com:SHD-CCP/geometric-engine-spec.git split/SHD-CCP/geometric-engine-spec:main
    ```
 
