@@ -1,0 +1,10 @@
+{
+  "suite": "handshake_alignment",
+  "spec_version": "0.1.0",
+  "rfc": "06",
+  "status": "pending",
+  "description": "Frame-free quadrance signatures and Horn quaternion vectors.",
+  "generator": "SHD-CCP/geometric-engine verification/export_golden_vectors.py",
+  "binary": null,
+  "cases": []
+}
