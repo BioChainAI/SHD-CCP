@@ -11,7 +11,7 @@ jobs:
     name: Validate golden vectors
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -36,7 +36,7 @@ jobs:
     name: Lean 4 proofs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
         with:
           lake-package-directory: formal/lean4

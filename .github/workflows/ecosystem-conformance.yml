@@ -25,7 +25,7 @@ jobs:
       run:
         working-directory: ecosystem/SHD-CCP/geometric-engine
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -37,7 +37,7 @@ jobs:
     name: Layer 0 · Lean 4 proofs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
         with:
           lake-package-directory: ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4
@@ -51,7 +51,7 @@ jobs:
       run:
         working-directory: ecosystem/SHD-CCP/geometric-engine-c
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
       - run: cmake --build build
       - run: ctest --test-dir build --output-on-failure
@@ -63,7 +63,7 @@ jobs:
       run:
         working-directory: ecosystem/SHD-CCP/geometric-engine-rust
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test
       - run: cargo build --no-default-features
@@ -75,7 +75,7 @@ jobs:
       run:
         working-directory: ecosystem/SHD-CCP/geometric-engine-java
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -89,7 +89,7 @@ jobs:
       run:
         working-directory: ecosystem/SHD-CCP/geometric-engine-elixir
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: erlef/setup-beam@v1
         with:
           elixir-version: "1.17"
@@ -104,7 +104,7 @@ jobs:
       run:
         working-directory: ecosystem/SHD-CCP/geometric-engine-js
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
