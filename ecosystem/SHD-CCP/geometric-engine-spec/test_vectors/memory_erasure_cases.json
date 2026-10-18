@@ -1,0 +1,10 @@
+{
+  "suite": "memory_erasure_cases",
+  "spec_version": "0.1.0",
+  "rfc": "04",
+  "status": "pending",
+  "description": "Single-erasure and 13th-engine cascade recovery vectors.",
+  "generator": "SHD-CCP/geometric-engine verification/export_golden_vectors.py",
+  "binary": null,
+  "cases": []
+}

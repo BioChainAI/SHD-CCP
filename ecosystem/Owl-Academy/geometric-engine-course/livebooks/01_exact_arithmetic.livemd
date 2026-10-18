@@ -1,0 +1,47 @@
+# Exact Arithmetic in the Geometric Engine
+
+```elixir
+Mix.install([
+  {:geometric_engine, github: "SHD-CCP/geometric-engine-elixir"}
+])
+
+alias GeometricEngine.{Crt, Tile, Tqf}
+```
+
+## 1. Reading an Einstein Tile
+
+A 64-bit tile decodes with one bitstring match. Change the hex value and re-run the cell.
+
+```elixir
+Tile.unpack(0x7763F40CF0091F85)
+```
+
+## 2. Cubic indices as three small residues
+
+Every index below 881 · 883 · 887 = 690,017,701 round-trips through three residues, each smaller than 900.
+
+```elixir
+n = 345_008_850
+residues = Crt.encode(n)
+{residues, Crt.decode(residues)}
+```
+
+## 3. Where floating point fails
+
+This triangle is a hair away from collinear. The exact Gram-TQF sees it, but float64 rounds the answer away.
+
+```elixir
+p1 = {-585_454, 894_496}
+p2 = {321_728, 893_587}
+p3 = {-821_979, 894_733}
+
+q = fn {ax, ay}, {bx, by} -> (ax - bx) ** 2 + (ay - by) ** 2 end
+{q1, q2, q3} = {q.(p2, p3) * 1.0, q.(p1, p3) * 1.0, q.(p1, p2) * 1.0}
+float64 = (q1 + q2 + q3) ** 2 - 2 * (q1 ** 2 + q2 ** 2 + q3 ** 2)
+
+%{exact: Tqf.gram_tqf(p1, p2, p3), float64: float64}
+```
+
+## Next
+
+* `02_twelve_engine_parity_recovery.livemd`: kill processes in the 12-engine supervision tree and watch parity recovery live. This needs RFC 04 to land in `geometric_engine` first.

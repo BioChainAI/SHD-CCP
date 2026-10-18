@@ -1,0 +1,111 @@
+# Runs every ecosystem/ repository against the Layer 0 golden vectors while
+# they are staged together in this repo. Each folder also carries its own
+# .github/workflows/ci.yml for after it is split out.
+name: Ecosystem conformance
+
+on:
+  push:
+    branches: [main]
+    paths: ["ecosystem/**", ".github/workflows/ecosystem-conformance.yml"]
+  pull_request:
+    paths: ["ecosystem/**", ".github/workflows/ecosystem-conformance.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GE_SPEC_DIR: ${{ github.workspace }}/ecosystem/SHD-CCP/geometric-engine-spec
+
+jobs:
+  reference:
+    name: Layer 1 · Python reference + vector drift
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ecosystem/SHD-CCP/geometric-engine
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e '.[test]'
+      - run: pytest
+      - run: python verification/export_golden_vectors.py --check
+
+  lean:
+    name: Layer 0 · Lean 4 proofs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4
+      - name: No sorry
+        run: "! grep -rn --include='*.lean' -w sorry ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4/GeometricEngineSpec"
+
+  c:
+    name: Layer 2 · C
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ecosystem/SHD-CCP/geometric-engine-c
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build
+      - run: ctest --test-dir build --output-on-failure
+
+  rust:
+    name: Layer 2 · Rust
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ecosystem/SHD-CCP/geometric-engine-rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test
+      - run: cargo build --no-default-features
+
+  java:
+    name: Layer 2 · Java
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ecosystem/SHD-CCP/geometric-engine-java
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: mvn -B test
+
+  elixir:
+    name: Layer 2 · Elixir
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ecosystem/SHD-CCP/geometric-engine-elixir
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.17"
+          otp-version: "27"
+      - run: mix format --check-formatted
+      - run: mix test
+
+  js:
+    name: Layer 2 · JavaScript
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ecosystem/SHD-CCP/geometric-engine-js
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm test

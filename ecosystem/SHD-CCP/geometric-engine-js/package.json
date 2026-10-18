@@ -1,0 +1,26 @@
+{
+  "name": "@shd-ccp/geometric-engine",
+  "version": "0.1.0",
+  "description": "SHD-CCP Geometric Engine browser/Node SDK: BigInt 64-bit Einstein Tile codec, Garner CRT and exact Gram-TQF.",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "files": ["src"],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SHD-CCP/geometric-engine-js.git"
+  }
+}

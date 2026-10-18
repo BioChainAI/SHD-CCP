@@ -1,0 +1,44 @@
+name: spec
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  vectors:
+    name: Validate golden vectors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install jsonschema
+      - name: Validate every suite against schema.json
+        run: |
+          python - <<'PY'
+          import json, pathlib, jsonschema
+          d = pathlib.Path("test_vectors")
+          schema = json.loads((d / "schema.json").read_text())
+          for p in sorted(d.glob("*.json")):
+              if p.name != "schema.json":
+                  jsonschema.validate(json.loads(p.read_text()), schema)
+                  print("ok", p.name)
+          PY
+      - name: Vectors match the reference generator
+        run: |
+          git clone --depth 1 https://github.com/SHD-CCP/geometric-engine ../geometric-engine
+          python ../geometric-engine/verification/export_golden_vectors.py --check --out test_vectors
+
+  lean:
+    name: Lean 4 proofs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: formal/lean4
+      - name: No sorry
+        run: "! grep -rn --include='*.lean' -w sorry formal/lean4/GeometricEngineSpec"
