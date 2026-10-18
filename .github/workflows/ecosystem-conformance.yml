@@ -1,4 +1,4 @@
-# Runs every ecosystem/ repository against the Layer 0 golden vectors while
+# Runs every Geometric_Engine/ecosystem/ repository against the Layer 0 golden vectors while
 # they are staged together in this repo. Each folder also carries its own
 # .github/workflows/ci.yml for after it is split out.
 name: Ecosystem conformance
@@ -6,16 +6,16 @@ name: Ecosystem conformance
 on:
   push:
     branches: [main]
-    paths: ["ecosystem/**", ".github/workflows/ecosystem-conformance.yml"]
+    paths: ["Geometric_Engine/ecosystem/**", ".github/workflows/ecosystem-conformance.yml"]
   pull_request:
-    paths: ["ecosystem/**", ".github/workflows/ecosystem-conformance.yml"]
+    paths: ["Geometric_Engine/ecosystem/**", ".github/workflows/ecosystem-conformance.yml"]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 env:
-  GE_SPEC_DIR: ${{ github.workspace }}/ecosystem/SHD-CCP/geometric-engine-spec
+  GE_SPEC_DIR: ${{ github.workspace }}/Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec
 
 jobs:
   reference:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ecosystem/SHD-CCP/geometric-engine
+        working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
@@ -40,16 +40,16 @@ jobs:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
         with:
-          lake-package-directory: ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4
+          lake-package-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4
       - name: No sorry
-        run: "! grep -rn --include='*.lean' -w sorry ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4/GeometricEngineSpec"
+        run: "! grep -rn --include='*.lean' -w sorry Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4/GeometricEngineSpec"
 
   c:
     name: Layer 2 · C
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ecosystem/SHD-CCP/geometric-engine-c
+        working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-c
     steps:
       - uses: actions/checkout@v5
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ecosystem/SHD-CCP/geometric-engine-rust
+        working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-rust
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ecosystem/SHD-CCP/geometric-engine-java
+        working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-java
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v4
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ecosystem/SHD-CCP/geometric-engine-elixir
+        working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-elixir
     steps:
       - uses: actions/checkout@v5
       - uses: erlef/setup-beam@v1
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ecosystem/SHD-CCP/geometric-engine-js
+        working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-js
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
