@@ -1,0 +1,48 @@
+{
+  "name": "SHD-CCP 64-bit Einstein Tile: L1 bounds",
+  "version": "0.1.0",
+  "word_bits": 64,
+  "bit_order": "lsb0",
+  "allocation_key_format": "SS_EE (inclusive start and end bit, two digits, e.g. \"00_15\")",
+  "header": {
+    "name": "Form_ID_Header",
+    "bits": [60, 63],
+    "type": "multiplexer",
+    "note": "Every kernel MUST place its Form ID here, so a decoder can read it before it knows the layout. OPEN: the draft RFC 01 in Geometric_Engine/ecosystem puts Form ID at bits 36-39 and the South Halo at 56-63. The two must be reconciled."
+  },
+  "form_id_range": [0, 15],
+  "domains": {
+    "Telemetry_Signals":  { "folder": "Domain_0_Telemetry_Signals",  "forms": [0, 3],   "scope": "Network routing, caches, exact physics" },
+    "Geometric_Pointers": { "folder": "Domain_1_Geometric_Pointers", "forms": [4, 7],   "scope": "Shapes, lattices, boundaries" },
+    "Codex_Semantics":    { "folder": "Domain_2_Codex_Semantics",    "forms": [8, 11],  "scope": "LLM embeddings, latent concepts" },
+    "Memory_Offload":     { "folder": "Domain_3_Memory_Offload",     "forms": [12, 15], "scope": "Pump configurations, recovery" }
+  },
+  "types": {
+    "bool":           { "width": 1 },
+    "uint4":          { "width": 4 },
+    "uint8":          { "width": 8 },
+    "uint12":         { "width": 12 },
+    "uint16":         { "width": 16 },
+    "uint24":         { "width": 24 },
+    "uint32":         { "width": 32 },
+    "int8":           { "width": 8 },
+    "int16":          { "width": 16 },
+    "int32":          { "width": 32 },
+    "residual_array": { "width": "any" },
+    "multiplexer":    { "width": 4, "header_only": true },
+    "reserved":       { "width": "any" },
+    "unallocated":    { "width": "any", "draft_only": true }
+  },
+  "lemmas": ["Lemma_1", "Lemma_2", "Lemma_3", "Lemma_4", "Lemma_5", "Lemma_6", "Lemma_7", "Lemma_8",
+             "Lemma_9", "Lemma_10", "Lemma_11", "Lemma_12", "Lemma_13", "Lemma_14", "Lemma_15"],
+  "required_kernel_keys": ["Kernel_Name", "Form_ID", "Domain", "Status", "Dependencies", "Bit_Allocation"],
+  "optional_kernel_keys": ["Description", "Proofs", "Validation", "Certification", "Locked",
+                           "Supersedes", "Superseded_By", "Postmortem"],
+  "stage_statuses": {
+    "01_Incubator_Experimental": ["[OPEN]", "[HEURISTIC]"],
+    "02_Validation_Matrix":      ["[OPEN]", "[HEURISTIC]", "[COMPUTED]"],
+    "03_Certified_Standard":     ["[PROVEN]"],
+    "04_Deprecated_Archive/failed_wobble_states": ["[FAILED]"],
+    "04_Deprecated_Archive/legacy_versions":      ["[SUPERSEDED]"]
+  }
+}

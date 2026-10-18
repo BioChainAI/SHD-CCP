@@ -18,6 +18,10 @@ These repositories are currently staged under [`Geometric_Engine/ecosystem/`](Ge
 
 *The Geometric Engine of Time* is the title of the chronometric 5-tier orbital calculator module inside the engine (RFC 05).
 
+## Kernel Ontology
+
+[`SHD-CCP_Kernel_Ontology/`](SHD-CCP_Kernel_Ontology/) is the registry of 64-bit kernel layouts, one per Form ID. Each layout moves through an agent-driven pipeline: Incubator `[OPEN]`/`[HEURISTIC]`, then Validation Matrix `[COMPUTED]`, then Certified Standard `[PROVEN]`, which requires machine-checked Lean proofs.
+
 ## Visualizations in this repo
 
 - [`Geometric_Engine/Geometric_Engine_Tutorial.html`](Geometric_Engine/Geometric_Engine_Tutorial.html)

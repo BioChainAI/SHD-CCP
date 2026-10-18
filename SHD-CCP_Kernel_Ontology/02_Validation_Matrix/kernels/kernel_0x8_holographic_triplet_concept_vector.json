@@ -1,0 +1,66 @@
+{
+  "Kernel_Name": "Holographic Triplet Concept Vector",
+  "Form_ID": "0x8",
+  "Domain": "Codex_Semantics",
+  "Status": "[COMPUTED]",
+  "Dependencies": [
+    "Lemma_6",
+    "Lemma_8"
+  ],
+  "Description": "Signifier / signified / context triplet with a 12-bit ECC metric tensor offload.",
+  "Bit_Allocation": {
+    "00_15": {
+      "name": "Q1_Signifier",
+      "type": "uint16",
+      "geometry": "Base Coordinate Frame"
+    },
+    "16_31": {
+      "name": "Q2_Signified",
+      "type": "uint16",
+      "geometry": "Target Manifold Surface"
+    },
+    "32_47": {
+      "name": "Q3_Context",
+      "type": "uint16",
+      "geometry": "Torsional Transform Vector"
+    },
+    "48_59": {
+      "name": "ECC_Metric_Tensor",
+      "type": "residual_array",
+      "geometry": "Orthogonal Offload Squeeze"
+    },
+    "60_63": {
+      "name": "Form_ID_Header",
+      "type": "multiplexer",
+      "geometry": "Shape Pointer"
+    }
+  },
+  "Validation": {
+    "tool": "validation_bot.py 0.1.0",
+    "checks": {
+      "layout_integrity": {
+        "result": "pass",
+        "details": "5 fields tile bits 0..63 exactly once"
+      },
+      "glass_box_round_trip": {
+        "result": "pass",
+        "details": "1000 random round trips and 5 isolation checks"
+      }
+    },
+    "pending_suites": [
+      "01_tqf_parity_checks",
+      "02_toda_kogame_stress",
+      "03_merkle_collision"
+    ],
+    "metrics": {
+      "fields": 5,
+      "payload_bits": 48,
+      "ecc_residual_bits": 12,
+      "reserved_bits": 0,
+      "header_bits": 4,
+      "payload_efficiency": 0.75
+    },
+    "validated_at": "2026-10-18",
+    "previous_status": "[HEURISTIC]"
+  }
+}

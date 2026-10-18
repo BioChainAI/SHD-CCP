@@ -1,0 +1,50 @@
+# Universal constants shared by every kernel. Each entry: value, unit, tag, source.
+# A null value means the constant is named but its value is not yet fixed.
+
+W_Sigma:
+  value: 60
+  unit: dimensionless
+  tag: "[DEFINED]"
+  source: "RFC 05: 6-channel, 5-tier orbital calculator (The Geometric Engine of Time)"
+
+Metronome_Hz:
+  value: 40
+  unit: Hz
+  tag: "[DEFINED]"
+  source: "40 Hz Metronome"
+
+Cs133_Parity_Closure_s:
+  value: 0.5
+  unit: s
+  tag: "[DEFINED]"
+  source: "RFC 05: 133Cs 0.5 s parity closure"
+
+Great_Year_Cycles:
+  value: 432
+  unit: cycles
+  tag: "[DEFINED]"
+  source: "RFC 05: 432-cycle Platonic Great Year"
+
+Cubit_C0:
+  value: null
+  unit: m
+  tag: "[OPEN]"
+  source: "RFC 05: local cubit C_0(T) from the Cramer (1993) speed of sound; formula and reference temperature not yet fixed"
+
+CRT_Moduli:
+  value: [881, 883, 887]
+  unit: dimensionless
+  tag: "[PROVEN]"
+  source: "RFC 02: Garner CRT cubic index"
+  proofs:
+    - GeometricEngineSpec.Arithmetic.crt_coprime_881_883
+    - GeometricEngineSpec.Arithmetic.crt_coprime_881_887
+    - GeometricEngineSpec.Arithmetic.crt_coprime_883_887
+
+CRT_Modulus_M:
+  value: 690017701
+  unit: dimensionless
+  tag: "[PROVEN]"
+  source: "RFC 02: 881 * 883 * 887"
+  proofs:
+    - GeometricEngineSpec.Arithmetic.crt_modulus
