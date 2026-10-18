@@ -6,8 +6,8 @@ To formalize:
 * Lemma 2 —
 * Lemma 3 —
 
-Fill in each statement from the Fifteen Lemmas monograph; no `sorry` may be
-merged into `main`.
+Fill in each statement from the Fifteen Lemmas monograph. Unfinished proofs
+must not be merged into `main` (CI rejects them).
 -/
 
 namespace GeometricEngineSpec.Synthetic
