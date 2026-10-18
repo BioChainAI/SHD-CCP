@@ -1,0 +1,20 @@
+{
+  "Kernel_Name": "Geodesic Icosahedron",
+  "Form_ID": "0x8",
+  "Domain": "Codex_Semantics",
+  "Status": "[OPEN]",
+  "Dependencies": [],
+  "Description": "Geodesic icosahedral latent-concept codex. Layout not yet designed.",
+  "Bit_Allocation": {
+    "00_59": {
+      "name": "Unallocated",
+      "type": "unallocated",
+      "geometry": "TBD"
+    },
+    "60_63": {
+      "name": "Form_ID_Header",
+      "type": "multiplexer",
+      "geometry": "Shape Pointer"
+    }
+  }
+}

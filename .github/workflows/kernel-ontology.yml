@@ -1,0 +1,33 @@
+name: Kernel ontology
+
+on:
+  push:
+    branches: [main]
+    paths: ["SHD-CCP_Kernel_Ontology/**", "Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec/formal/**", ".github/workflows/kernel-ontology.yml"]
+  pull_request:
+    paths: ["SHD-CCP_Kernel_Ontology/**", "Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec/formal/**", ".github/workflows/kernel-ontology.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: SHD-CCP_Kernel_Ontology
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r Agent_Tooling/requirements.txt
+      - name: Ontology linter
+        run: python Agent_Tooling/ontology_linter.py
+      - name: Pipeline tests
+        run: pytest -q Agent_Tooling/tests
+      - name: Bot dry run (report only)
+        run: |
+          python Agent_Tooling/validation_bot.py --dry-run
+          python Agent_Tooling/certification_bot.py certify --dry-run
