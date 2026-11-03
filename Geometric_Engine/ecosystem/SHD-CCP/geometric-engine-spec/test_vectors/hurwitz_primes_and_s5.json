@@ -1,0 +1,10 @@
+{
+  "suite": "hurwitz_primes_and_s5",
+  "spec_version": "0.1.0",
+  "rfc": "02",
+  "status": "pending",
+  "description": "94 4D Hurwitz prime nodes and S5 reduced words up to depth 8.",
+  "generator": "SHD-CCP/geometric-engine verification/export_golden_vectors.py",
+  "binary": null,
+  "cases": []
+}

@@ -1,0 +1,20 @@
+{
+  "Kernel_Name": "Exact Scalar",
+  "Form_ID": "0x3",
+  "Domain": "Telemetry_Signals",
+  "Status": "[OPEN]",
+  "Dependencies": [],
+  "Description": "High-precision lossless scalar (exact physics). Layout not yet designed.",
+  "Bit_Allocation": {
+    "00_59": {
+      "name": "Unallocated",
+      "type": "unallocated",
+      "geometry": "TBD"
+    },
+    "60_63": {
+      "name": "Form_ID_Header",
+      "type": "multiplexer",
+      "geometry": "Shape Pointer"
+    }
+  }
+}

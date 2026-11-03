@@ -1,0 +1,16 @@
+[package]
+name = "geometric-engine"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+description = "SHD-CCP Geometric Engine: 64-bit Einstein Tile codec, Garner CRT and exact 128-bit Gram-TQF (no_std)."
+license = "MIT"
+repository = "https://github.com/SHD-CCP/geometric-engine-rust"
+keywords = ["shd-ccp", "geometry", "no-std", "quaternion"]
+categories = ["mathematics", "no-std", "encoding"]
+
+[features]
+default = ["std"]
+std = []
+
+[dependencies]

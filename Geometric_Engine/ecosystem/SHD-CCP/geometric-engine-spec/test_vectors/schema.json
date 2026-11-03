@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/SHD-CCP/geometric-engine-spec/test_vectors/schema.json",
+  "title": "SHD-CCP golden test-vector suite",
+  "type": "object",
+  "required": ["suite", "spec_version", "rfc", "status", "description", "generator", "binary", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "suite": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "spec_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "rfc": { "type": "string", "pattern": "^\\d{2}$" },
+    "status": {
+      "enum": ["normative", "draft", "pending"],
+      "description": "normative: conformance-gating. draft: run and reported, layout may still change. pending: no cases yet."
+    },
+    "description": { "type": "string" },
+    "generator": { "type": "string" },
+    "binary": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["file", "fields"],
+          "additionalProperties": false,
+          "properties": {
+            "file": { "type": "string", "pattern": "^[a-z0-9_]+\\.bin$" },
+            "fields": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+          }
+        }
+      ]
+    },
+    "cases": { "type": "array", "items": { "type": "object" } }
+  },
+  "if": { "properties": { "status": { "const": "pending" } } },
+  "then": { "properties": { "cases": { "maxItems": 0 } } },
+  "else": { "properties": { "cases": { "minItems": 1 }, "binary": { "type": "object" } } }
+}
