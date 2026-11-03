@@ -1,0 +1,67 @@
+{
+  "title": "SHD-CCP Manual",
+  "chapters": [
+    {
+      "slug": "index",
+      "source": "architecture-overview.html",
+      "title": "Architecture Overview",
+      "status": "available",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "The Problem"
+        },
+        {
+          "id": "tile",
+          "title": "What a Tile Looks Like"
+        },
+        {
+          "id": "dataflow",
+          "title": "How Data Moves"
+        },
+        {
+          "id": "walkthrough",
+          "title": "Worked Example"
+        },
+        {
+          "id": "principles",
+          "title": "Core Design Principles"
+        },
+        {
+          "id": "where-next",
+          "title": "Where to Go From Here"
+        }
+      ]
+    },
+    {
+      "slug": "einstein-tile",
+      "title": "64-Bit Einstein Tile",
+      "status": "planned",
+      "source": "einstein-tile.html"
+    },
+    {
+      "slug": "fokker-planck-sieve",
+      "title": "Fokker-Planck Prime Sieve",
+      "status": "planned",
+      "source": "fokker-planck-sieve.html"
+    },
+    {
+      "slug": "learned-codex",
+      "title": "The Learned Codex",
+      "status": "planned",
+      "source": "learned-codex.html"
+    },
+    {
+      "slug": "fpga-implementation",
+      "title": "FPGA Hardware Implementation",
+      "status": "planned",
+      "source": "fpga-implementation.html"
+    },
+    {
+      "slug": "glossary",
+      "title": "Glossary of Terms",
+      "status": "planned",
+      "source": "glossary.html"
+    }
+  ]
+}

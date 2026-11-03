@@ -1,0 +1,153 @@
+<!-- Editable article fragment. Rebuild with: python3 manual/build.py -->
+<h1>SHD-CCP: How the Protocol Works</h1>
+
+            <h2 id="problem">The problem SHD-CCP solves</h2>
+
+            <p>
+                You have three independent, high-throughput data streams. You need to multiplex all three into a single channel, compress their geometry without floating-point error, and automatically detect structurally significant events&mdash;without brute-force search and without growing your memory budget as the data scales.
+            </p>
+
+            <p>
+                <strong>Symbolic High Dimensional Context Compression Protocol (SHD-CCP)</strong> is the answer. It is a hardware-level ABI (Application Binary Interface) built around one rule: every token in the system is a single 64-bit word called an <a href="einstein-tile.html">Einstein Tile</a>. There is no secondary format. A tile is simultaneously an instruction, a state descriptor, and a procedural seed&mdash;meaning the system never stores history, it regenerates it on demand from the tile itself.
+            </p>
+
+            <h2 id="tile">What a tile looks like</h2>
+
+            <p>
+                Before understanding the pipeline, you need to see the data format. The default kernel layout is the <strong>Blackwell Block</strong>&mdash;seven fields packed into exactly 64 bits. Every field is classified by its role in the 8&times;8 spatial projector grid: <strong>HALO</strong> fields sit in the border rows and carry structural metadata, the <strong>CORE</strong> field is the quaternion vine at the center, and <strong>STANDARD</strong> fields fill the remaining space with stream-specific data.
+            </p>
+
+            <div class="table-wrap" role="region" aria-label="Blackwell Block field layout" tabindex="0"><table class="doc-table">
+                <tr><th>Field</th><th>Type</th><th>Bits</th><th>Class</th><th>What it does</th></tr>
+                <tr><td><code>Structural Form ID</code></td><td>INT4</td><td>4</td><td style="color:#8e44ad;font-weight:bold;">HALO</td><td>Identifies the geometric form class of this tile. Sits in the north halo row of the projector grid.</td></tr>
+                <tr><td><code>Parity</code></td><td>UINT</td><td>1</td><td style="color:#8e44ad;font-weight:bold;">HALO</td><td>Single-bit parity check for error detection across the tile.</td></tr>
+                <tr><td><code>Spin Class</code></td><td>INT4</td><td>3</td><td style="color:#27ae60;font-weight:bold;">STANDARD</td><td>Encodes the spinor classification of the current state within the 720-cycle.</td></tr>
+                <tr><td><code>Comp. Quaternion</code></td><td>FP4</td><td>32</td><td style="color:#c0392b;font-weight:bold;">CORE</td><td>The compressed quaternion&mdash;the &ldquo;vine&rdquo; of the system. This is the temporal backbone: every chain of tiles is linked through its quaternion, making it the seed from which the hyperbolic AI system reconstructs history. Half the tile by design.</td></tr>
+                <tr><td><code>Payload Scale</code></td><td>FP16</td><td>16</td><td style="color:#27ae60;font-weight:bold;">STANDARD</td><td>Scaling factor for the data payload carried by this tile. FP16 gives dynamic range for cross-scale operations.</td></tr>
+                <tr><td><code>Frequency ID</code></td><td>INT8</td><td>5</td><td style="color:#27ae60;font-weight:bold;">STANDARD</td><td>Tags which frequency band this tile operates in on the toroidal surface.</td></tr>
+                <tr><td><code>Amplitude ID</code></td><td>INT4</td><td>3</td><td style="color:#27ae60;font-weight:bold;">STANDARD</td><td>Tags the amplitude level of the data stream at this tile.</td></tr>
+            </table></div>
+
+            <p>
+                The Blackwell Block is the <em>default</em> kernel, not the only one. The kernel is modular: custom field definitions can be loaded as long as the total stays at 64 bits and the Comp. Quaternion core is present&mdash;because the quaternion chain is what the hyperbolic system builds on for temporal data. Full details, the 8&times;8 projector grid layout, and modularity rules are on the <a href="einstein-tile.html">Einstein Tile</a> page.
+            </p>
+
+            <h2 id="dataflow">How data moves through the pipeline</h2>
+
+            <p>
+                A tile enters the pipeline and passes through four stages. Each stage reads and writes the same 64-bit format, so there is no marshalling between them.
+            </p>
+
+            <div class="diagram-container">
+                <div style="background: #2980B9; color: white; padding: 8px; font-weight: bold; margin-bottom: 15px;">Data Flow: Life of a Tile</div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                    <div style="background: #2c3e50; color: #ecf0f1; padding: 10px 30px; font-size: 14px; font-weight: bold; border-radius: 4px;">RAW INPUT &mdash; 3 data streams, absolute coordinates</div>
+                    <div style="font-size: 20px; color: #7f8c8d; line-height: 1.2;">&darr;</div>
+                    <div style="background: #16a085; color: white; padding: 12px 20px; width: 80%; text-align: left; font-size: 13px;">
+                        <strong>Stage 1: Lattice &amp; TQF Compression</strong><br>
+                        Map coordinates onto the 4&times;4&times;4 lattice. Compute quadrance (squared distance, no square roots). Apply Triple Quad Formula to detect and delete collinear nodes. Output: compressed lattice positions in pure integers.
+                    </div>
+                    <div style="font-size: 20px; color: #7f8c8d; line-height: 1.2;">&darr;</div>
+                    <div style="background: #27ae60; color: white; padding: 12px 20px; width: 80%; text-align: left; font-size: 13px;">
+                        <strong>Stage 2: Symmetry Folding</strong><br>
+                        Convert absolute positions to quaternionic deltas (&Delta;q)&mdash;track only the rotation between states. Project into hyperbolic space SL(2,&#8450;) and map the 3 streams onto a trefoil knot. D3 symmetry means you store 1/3 of the cycle; the other 2/3 are recovered by group action at read time. The 720-step spinor counter auto-resets drift.
+                    </div>
+                    <div style="font-size: 20px; color: #7f8c8d; line-height: 1.2;">&darr;</div>
+                    <div style="background: #8e44ad; color: white; padding: 12px 20px; width: 80%; text-align: left; font-size: 13px;">
+                        <strong>Stage 3: Sieve Detection</strong><br>
+                        Tiles flow onto the Golden Toroid (4D torus, golden-ratio winding). A Fokker-Planck diffusion process runs over the surface. When streams intersect at a point whose QACC field is prime, diffusion collapses to zero and density locks into a standing wave&mdash;a <strong>Golden Soliton</strong>. That's the system saying &ldquo;this point matters.&rdquo;
+                    </div>
+                    <div style="font-size: 20px; color: #7f8c8d; line-height: 1.2;">&darr;</div>
+                    <div style="background: #c0392b; color: white; padding: 12px 20px; width: 80%; text-align: left; font-size: 13px;">
+                        <strong>Stage 4: Codex Write / Lookup</strong><br>
+                        Locked solitons are stripped of transient fields, verified (conventional primality check), and written to The Codex as topological pointers keyed by invariants. Next time the pipeline encounters the same structure at any scale, the <code>CODEX_HIT</code> flag fires and the entire generation pipeline is bypassed&mdash;O(1) retrieval replaces regeneration.
+                    </div>
+                    <div style="font-size: 20px; color: #7f8c8d; line-height: 1.2;">&darr;</div>
+                    <div style="background: #2c3e50; color: #ecf0f1; padding: 10px 30px; font-size: 14px; font-weight: bold; border-radius: 4px;">OUTPUT &mdash; 64-bit tile (same format as input)</div>
+                </div>
+            </div>
+
+            <h2 id="walkthrough">Worked example: a tile from input to output</h2>
+
+            <p>
+                Suppose stream data arrives that needs to be encoded as a tile on frequency band 12, amplitude level 3, using structural form 5.
+            </p>
+
+            <p>
+                <strong>Encoding.</strong> The Blackwell Block is packed: <code>Structural Form ID = 5</code> (4 bits), <code>Parity</code> computed over the other fields (1 bit), <code>Spin Class = 2</code> encoding the current spinor state (3 bits). The 32-bit <code>Comp. Quaternion</code> core is written with the FP4-compressed rotation delta from the previous tile in this chain&mdash;this is the vine link. <code>Payload Scale</code> carries an FP16 scaling factor for cross-scale normalization. <code>Frequency ID = 12</code> (5 bits) and <code>Amplitude ID = 3</code> (3 bits) tag the stream context. The tile is now a single 64-bit word and enters the pipeline.
+            </p>
+
+            <p>
+                <strong>Stage 1 &mdash; TQF test.</strong> The pipeline extracts the quaternion vine and evaluates whether the geometry implied by the last three tiles in this chain is collinear, using quadrances Q1, Q2, Q3 and the integer test <code>(Q1+Q2+Q3)&sup2; = 2(Q1&sup2;+Q2&sup2;+Q3&sup2;)</code>. If collinear, the intermediate tile is pruned (compression). If not, the tile advances.
+            </p>
+
+            <p>
+                <strong>Stage 2 &mdash; Fold.</strong> The quaternion core is composed with the running group element. The D3 fold maps the trefoil position to the fundamental domain (one third of the cycle), so the lookup into stored cycle state hits one BRAM read. The Spin Class field tracks where we are in the 720-step spinor cycle.
+            </p>
+
+            <p>
+                <strong>Stage 3 &mdash; Sieve.</strong> The Frequency ID and Amplitude ID locate the tile on the Golden Toroid surface. The sieve evaluates whether the current intersection point has prime quadrance. On this tick, it doesn't&mdash;diffusion stays nonzero and the tile passes through normally.
+            </p>
+
+            <p>
+                <strong>Stage 4 &mdash; Codex check.</strong> The Codex table is probed with the tile's invariant key (derived from the quaternion chain and structural form). No hit. The tile exits the pipeline as a 64-bit output, same format, with parity recomputed over any updated fields.
+            </p>
+
+            <p>
+                Many ticks later, the sieve detects a prime-quadrance intersection. A Golden Soliton locks, the soliton is verified, and a new Codex entry is written. Every future encounter with that geometric structure&mdash;at any Fibonacci scale&mdash;resolves in 2 cycles (hash + BRAM read) instead of traversing the full pipeline.
+            </p>
+
+            <h2 id="principles">Core design principles</h2>
+
+            <p>
+                <strong>One format everywhere.</strong> The 64-bit Einstein Tile is the only data format in the protocol. Input, output, pipeline registers, BRAM words, Codex entries, and inter-stage buses are all the same 64 bits. No conversion logic, no alignment padding, no mixed word sizes.
+            </p>
+
+            <p>
+                <strong>The quaternion vine is sacred.</strong> The 32-bit Comp. Quaternion is the CORE field&mdash;it takes half the tile because it <em>is</em> the temporal backbone. Every chain of tiles is linked through its quaternion; the hyperbolic system grows from this vine. Custom kernel definitions can rearrange the other 32 bits however they need to, but the quaternion core must be present.
+            </p>
+
+            <p>
+                <strong>Compact numeric formats, not raw floats.</strong> The kernel uses FP4 for the quaternion core and FP16 for the payload scale&mdash;compressed floating-point formats chosen for density, not IEEE-754 doubles. Geometry tests (TQF collinearity) still operate on integer quadrance; the compressed formats serve the vine chain and cross-scale normalization.
+            </p>
+
+            <p>
+                <strong>Stateless by default, memory by exception.</strong> The pipeline regenerates geometry on demand from the tile's seed fields. The only stored state is the Codex&mdash;a table of verified, invariant-keyed results that short-circuit future computation. Everything else is computed, never cached.
+            </p>
+
+            <p>
+                <strong>Drift is impossible by construction.</strong> The 720-step spinor cycle (tracked by the Spin Class field) forces a hard reset to identity. There is no accumulated error to monitor or correct&mdash;it is zeroed on schedule.
+            </p>
+
+            <p>
+                <strong>Symmetry pays for itself.</strong> D3 symmetry on the trefoil manifold cuts stored cycle state to one third. The remaining two thirds are recovered at read time by applying a stored group element&mdash;a LUT operation, not a memory read.
+            </p>
+
+            <p>
+                <strong>Halo / Core / Standard.</strong> The 8&times;8 projector grid is not just a visualization&mdash;it maps the tile's fields to spatial regions that align with cache lines and memory boundaries. HALO fields (structural metadata, parity) sit in the border rows for fast boundary checks. The CORE quaternion occupies the center 4&times;4 block. STANDARD fields fill the rest. This spatial mapping is what lets the same 64-bit tile work as both a data token and a cache-aligned memory word.
+            </p>
+
+            <div class="admonition note">
+                <span class="admonition-title">Claim status</span>
+                The principles above mix established mathematics (rational trigonometry, quaternion groups, D3 knot symmetry, 720&deg; spinor periodicity) with design-stage conjectures (prime-quadrance sieve detection, soliton crystallization). The detail chapters are planned; future additions should state claim status and supporting evidence explicitly.
+            </div>
+
+            <h2 id="where-next">Where to go from here</h2>
+
+            <p class="admonition note">The overview is available now. The detail chapters below are scaffolded and marked <strong>Planned</strong>; their full technical content will be added in future revisions.</p>
+
+            <p>
+                <strong>Understand the data format</strong> &rarr; <a href="einstein-tile.html">64-Bit Einstein Tile</a> explains every field, why the widths are what they are, and how a tile procedurally unfolds.
+            </p>
+            <p>
+                <strong>Understand the detection mechanism</strong> &rarr; <a href="fokker-planck-sieve.html">Fokker-Planck Prime Sieve</a> covers the governing PDE, the toroidal boundary condition, and the prime-detection trigger.
+            </p>
+            <p>
+                <strong>Understand persistent memory</strong> &rarr; <a href="learned-codex.html">The Learned Codex</a> details what gets stored, how entries are keyed, and the promotion/eviction lifecycle.
+            </p>
+            <p>
+                <strong>Map it to hardware</strong> &rarr; <a href="fpga-implementation.html">FPGA Hardware Implementation</a> shows the pipeline on real FPGA resources: DSP slices, BRAM tiles, and LUT fabric.
+            </p>
+            <p>
+                <strong>Look up a term</strong> &rarr; <a href="glossary.html">Glossary</a> has every term tagged as <em>established math</em>, <em>protocol-defined</em>, or <em>conjecture</em>.
+            </p>

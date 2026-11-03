@@ -20,12 +20,16 @@ async function mockFirebase(page, accountStatus = 'allowed') {
         await observer(auth.currentUser);
         return { user: auth.currentUser || { displayName: 'Test Visitor' } };
       }
-      export async function signOut() { auth.currentUser = null; await observer(null); }
+      export async function signOut() {
+        if (window.__holdSignOut) await new Promise(resolve => { window.__resolveSignOut = resolve; });
+        auth.currentUser = null; await observer(null);
+      }
     `;
     if (path.endsWith('firebase-firestore.js')) body = `
       export const getFirestore = () => ({});
       export const doc = (...args) => args;
       export async function getDoc() {
+        if (window.__holdAccountCheck) await new Promise(resolve => { window.__resolveAccountCheck = resolve; });
         if (window.__accountStatus === 'error') throw new Error('Test read failure');
         return { exists: () => window.__accountStatus === 'banned' };
       }
@@ -46,8 +50,78 @@ test('signed-out gate keeps the guide and briefing hidden', async ({ page }) => 
   await page.goto('/');
   await expect(page.locator('#auth-gate')).toBeVisible();
   await expect(page.locator('#main-content')).toBeHidden();
+  await expect(page.locator('#genesis-preview')).toBeVisible();
   await expect(page.locator('#bit-grid-container button')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('SHD-CCP, Explained');
+});
+
+test('guest entry works without Firebase and persists when returning from the manual', async ({ page }) => {
+  await page.route('https://www.gstatic.com/**', route => route.abort());
+  await page.route('https://fonts.googleapis.com/**', route => route.abort());
+  await page.route('https://cdnjs.cloudflare.com/**', route => route.abort());
+  await page.goto('/');
+  await page.locator('#guest-auth-button').click();
+  await expect(page.locator('#interactive-explainer')).toBeVisible();
+  await expect(page.locator('#user-status')).toHaveText('Guest browsing');
+  await expect(page.locator('#auth-gate')).toBeHidden();
+  await expect(page.locator('#pipeline-pills button')).toHaveCount(7);
+  await page.locator('header a[href="manual/"]').click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('SHD-CCP: How the Protocol Works');
+  await page.locator('.home-link').click();
+  await expect(page.locator('#guest-browsing-note')).toBeVisible();
+  await page.locator('#exit-guest-button').click();
+  await expect(page.locator('#auth-gate')).toBeVisible();
+  await expect(page.locator('#main-content')).toBeHidden();
+});
+
+test('guest choice wins over an older pending account check', async ({ page }) => {
+  await mockFirebase(page);
+  await page.goto('/');
+  await page.evaluate(() => { window.__holdAccountCheck = true; window.__holdSignOut = true; });
+  await page.locator('#gate-auth-button').click();
+  await expect(page.locator('#gate-status')).toContainText('Checking account');
+  await page.locator('#guest-auth-button').click();
+  await page.evaluate(() => window.__resolveAccountCheck());
+  await expect(page.locator('#user-status')).toHaveText('Guest browsing');
+  await expect(page.locator('#interactive-explainer')).toBeVisible();
+  await page.evaluate(() => window.__resolveSignOut());
+  await expect(page.locator('#user-status')).toHaveText('Guest browsing');
+});
+
+test('manual is public with working chapter scaffolds and responsive navigation', async ({ page }) => {
+  await page.goto('/manual/');
+  await expect(page.locator('h1')).toHaveText('SHD-CCP: How the Protocol Works');
+  await page.getByRole('navigation', { name: 'Manual chapters' }).getByRole('link', { name: '64-Bit Einstein Tile' }).click();
+  await expect(page.locator('.chapter-status')).toContainText('Planned');
+  await expect(page.locator('h1')).toHaveText('64-Bit Einstein Tile');
+  await page.goto('/manual/');
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});
+
+test('Genesis preview uses the real 3D module and shares bits with its seed input', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await mockFirebase(page);
+  await page.goto('/');
+  const frame = page.frameLocator('#genesis-preview');
+  await expect(frame.locator('#canvas-container canvas')).toHaveCount(1);
+  await expect(frame.locator('#bit-matrix button')).toHaveCount(64);
+  await frame.locator('#packet-seed').fill('0000000000000000');
+  await frame.locator('#apply-seed').click();
+  await frame.locator('#bit-63').click();
+  await expect(frame.locator('#packet-seed')).toHaveValue('0000000000000001');
+  await frame.locator('#packet-seed').fill('not-a-packet');
+  await frame.locator('#apply-seed').click();
+  await expect(frame.locator('#packet-seed')).toHaveAttribute('aria-invalid', 'true');
+  await frame.locator('#btn-topology').click();
+  await expect(frame.locator('#btn-topology')).toContainText('TOROIDAL');
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await frame.locator('html').evaluate(el => el.scrollWidth <= innerWidth)).toBe(true);
+  expect(errors).toEqual([]);
 });
 
 test('authorized guide supports pipeline, register, models, calculators, and reference', async ({ page }) => {

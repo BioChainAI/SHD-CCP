@@ -1,0 +1,221 @@
+
+        :root {
+            --color-base: #00ffcc;
+            --color-active: #ff00ff;
+            --color-bg: #050505;
+            --color-panel: rgba(5, 15, 20, 0.75);
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: var(--color-bg);
+            font-family: ui-monospace, 'Cascadia Code', monospace;
+            color: var(--color-base);
+            transition: background-color 0.5s;
+        }
+
+        .text-\[\#00ffcc\] { color: var(--color-base) !important; }
+        .text-\[\#ff00ff\] { color: var(--color-active) !important; }
+        .border-\[\#00ffcc\] { border-color: var(--color-base) !important; }
+        .border-l-\[\#00ffcc\] { border-left-color: var(--color-base) !important; }
+        .bg-\[\#00ffcc\] { background-color: var(--color-base) !important; }
+        .accent-\[\#00ffcc\] { accent-color: var(--color-base) !important; }
+        .hover\:bg-\[\#00ffcc\]:hover { background-color: var(--color-base) !important; }
+        .hover\:text-\[\#00ffcc\]:hover { color: var(--color-base) !important; }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+        .ui-layer {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .interactive {
+            pointer-events: auto;
+        }
+        .glass-panel {
+            background: var(--color-panel);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: background 0.5s;
+        }
+
+        /* Blackwell Block Matrix Styles */
+        .bit-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+            padding: 8px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            border: 1px solid rgba(0,255,204,0.2);
+        }
+        .bit-box {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.3);
+            text-shadow: 0 0 2px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        /* Logic State styling */
+        .bit-box.bit-on {
+            color: #ffffff;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+            border-color: rgba(255,255,255,0.8);
+        }
+
+        .schema-label {
+            position: absolute;
+            font-size: 8px;
+            bottom: 1px;
+            right: 2px;
+            opacity: 0.7;
+        }
+
+        /* Blackwell Field Colors */
+        .bit-st { background-color: rgba(139, 92, 246, 0.4); }
+        .bit-pt { background-color: rgba(156, 163, 175, 0.4); }
+        .bit-pl { background-color: rgba(16, 185, 129, 0.4); }
+        .bit-co { background-color: rgba(236, 72, 153, 0.4); }
+        .bit-fr { background-color: rgba(59, 130, 246, 0.4); }
+        .bit-sp { background-color: rgba(239, 68, 68, 0.4); }
+        .bit-am { background-color: rgba(245, 158, 11, 0.4); }
+
+        .bit-box.bit-on.bit-st { background-color: rgba(139, 92, 246, 0.9); }
+        .bit-box.bit-on.bit-pt { background-color: rgba(156, 163, 175, 0.9); }
+        .bit-box.bit-on.bit-pl { background-color: rgba(16, 185, 129, 0.9); }
+        .bit-box.bit-on.bit-co { background-color: rgba(236, 72, 153, 0.9); }
+        .bit-box.bit-on.bit-fr { background-color: rgba(59, 130, 246, 0.9); }
+        .bit-box.bit-on.bit-sp { background-color: rgba(239, 68, 68, 0.9); }
+        .bit-box.bit-on.bit-am { background-color: rgba(245, 158, 11, 0.9); }
+
+        .bit-box:hover {
+            transform: scale(1.1);
+            border-color: #fff;
+            z-index: 10;
+        }
+        .bit-box.wave-active {
+            filter: brightness(1.8);
+            box-shadow: 0 0 15px currentColor;
+        }
+        .bit-box.selected {
+            border: 2px solid #fff;
+            box-shadow: 0 0 15px #fff;
+            transform: scale(1.15);
+            z-index: 10;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar-thumb { background: var(--color-base); }
+
+        .btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--color-base);
+            color: var(--color-base);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: var(--color-base);
+            color: #000;
+            box-shadow: 0 0 15px var(--color-base);
+        }
+        .text-glow { text-shadow: 0 0 5px var(--color-base); }
+        .text-magenta { color: var(--color-active); text-shadow: 0 0 5px var(--color-active); }
+
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+
+        input[type=range]::-webkit-slider-thumb {
+            appearance: none; width: 16px; height: 16px; border-radius: 50%;
+            background: var(--color-base); cursor: pointer; box-shadow: 0 0 5px var(--color-base);
+        }
+        input[type=range]:disabled::-webkit-slider-thumb {
+            background: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+/* The original kernel now lives in a scrollable, embeddable guest showcase. */
+* { box-sizing: border-box; }
+body { padding: 0; min-width: 0; }
+.hidden { display: none !important; }
+.is-embedded .showcase-header { display: none; }
+.showcase-header { padding: 1rem 1.25rem; border-bottom: 1px solid #153a40; }
+.showcase-header h1 { color: #b9fff5; font-size: 1.2rem; font-weight: 700; margin: 0 0 .5rem; }
+.showcase-header p { font: .8rem/1.6 system-ui, sans-serif; color: #a6c4cb; max-width: 80ch; margin: .25rem 0; }
+.showcase-layout { display: grid; grid-template-columns: minmax(0,1fr) 18rem; gap: 1rem; padding: 1rem; align-items: start; }
+.visual-column, .control-column, .packet-panel { min-width: 0; }
+.control-column { display: flex; flex-direction: column; gap: 1rem; }
+#canvas-container { position: relative; width: 100%; height: clamp(360px, 65vh, 600px); border: 1px solid #155451; border-radius: .7rem; overflow: hidden; background: radial-gradient(ellipse at center, #071b21, #020606); }
+#canvas-container canvas { display: block; width: 100%; height: 100%; }
+.canvas-hint { margin: .7rem 0; font-size: .7rem; color: #99b9bb; line-height: 1.5; }
+.canvas-message { position: absolute; inset: 1rem; display: grid; place-content: center; text-align: center; color: #bde7e0; font: .9rem/1.7 system-ui,sans-serif; }
+.playback-panel { padding: .9rem; display: grid; gap: .8rem; margin-top: 1rem; }
+.playback-row { display: flex; align-items: center; gap: .6rem; min-width: 0; flex-wrap: wrap; }
+.playback-row input { flex: 1; min-width: 5rem; }
+#frame-counter { min-width: 5rem; font-size: .7rem; }
+#panel-projector, #panel-inspector { position: static; width: 100%; max-width: 100%; }
+#header-projector, #header-inspector { cursor: default; }
+#vis-panel { position: static; width: 100%; margin-top: .8rem; }
+.packet-panel { margin: 0 1rem 1rem; padding: 1rem; border-radius: .7rem; }
+.packet-heading { color: #b9fff5; font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+.seed-form { display: flex; flex-wrap: wrap; align-items: end; gap: .7rem; margin: 1rem 0; }
+.seed-field { flex: 1; min-width: 12rem; }
+.seed-field label { display: block; font-size: .75rem; color: #bde3de; margin-bottom: .4rem; }
+.seed-field input { width: 100%; padding: .6rem; border: 1px solid #28625f; border-radius: .3rem; background: #031311; color: #baffef; font: .9rem ui-monospace,monospace; }
+#seed-status { font: .75rem/1.5 system-ui,sans-serif; min-height: 1.5em; color: #c4dedb; }
+.packet-grid-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(16rem,1fr); gap: 1rem; }
+.bit-matrix-grid { max-width: 390px; width: 100%; grid-template-columns: repeat(8,minmax(0,1fr)); gap: 5px; }
+.bit-box { width: 100%; height: auto; min-height: 30px; aspect-ratio: 1; }
+.bit-value { pointer-events: none; }
+.matrix-caption { font: .7rem/1.6 system-ui,sans-serif; color: #9db9b7; max-width: 48ch; margin-top: .75rem; }
+.btn { font-size: .72rem; border-radius: .3rem; min-height: 36px; }
+button:disabled, input:disabled { opacity: .55; cursor: default; }
+button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid #ccfff4; outline-offset: 3px; }
+.controls-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .6rem 0; font-size: .75rem; }
+.footer-note { padding: 0 1.2rem 1.2rem; font: .72rem/1.6 system-ui,sans-serif; color: #91aaa9; }
+.footer-note a { color: #9fe8dc; text-decoration: underline; }
+@media (max-width: 800px) {
+ .showcase-layout { grid-template-columns: minmax(0,1fr); }
+ .control-column { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+ #canvas-container { height: 380px; }
+ .packet-grid-layout { grid-template-columns: minmax(0,1fr); }
+}
+@media (max-width: 480px) {
+ .control-column { grid-template-columns: minmax(0,1fr); }
+ #canvas-container { height: 330px; }
+ .showcase-header { padding: 1rem; }
+ .showcase-header h1 { font-size: 1.05rem; }
+ .playback-row { gap: .5rem; }
+ #frame-slider { flex-basis: 100%; order: 3; }
+ .seed-field { min-width: 0; flex-basis: 100%; }
+ .bit-matrix-grid { gap: 4px; padding: 5px; }
+ .bit-box { font-size: .75rem; min-height: 27px; }
+}
+@media (prefers-reduced-motion: reduce) {
+ *, *::before, *::after { transition: none !important; }
+ .bit-box:hover, .bit-box.selected { transform: none; }
+}

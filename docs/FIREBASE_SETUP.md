@@ -13,10 +13,15 @@ keeps SHD-CCP's users, auth config, and any future data fully standalone.
 
 ## Access control (login gate + ban list)
 
-`index.html` now gates all content behind Google Sign-In:
+`index.html` offers public guest browsing as well as Google Sign-In:
 
-- **Signed out** → visitors see a "Sign In Required" panel in place of the
-  page content (no navigation away, no content in the DOM until they sign in).
+- **Signed out** → visitors see the Genesis Kernel theoretical packet preview,
+  an **Explore as guest** button, and Google sign-in. The manual is public.
+- **Guest browsing** → the public guide and Digital Seed briefing are revealed
+  without creating a Firebase user or reading Firestore. This works even when
+  Firebase is unreachable. The guest choice lasts for the current tab session;
+  **Leave guest mode** returns to the preview/sign-in screen. Guest mode does not
+  grant an authenticated identity or access to any account-backed data.
 - **Signed in** → the client reads `bannedUsers/{uid}` from Firestore.
   - Document **exists** → the user is signed out and redirected to
     `access-denied.html`.

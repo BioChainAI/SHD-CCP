@@ -34,10 +34,17 @@ See [`docs/FIREBASE_SETUP.md`](docs/FIREBASE_SETUP.md) for the sign-in gate and 
 
 ## Homepage development
 
-The homepage contains the interactive architecture guide and the original Digital
-Seed briefing. Both use the existing Firebase sign-in and account-status gate;
-the original briefing is available in an expandable section below the guide.
-The Geometric Engine tutorial remains linked from the homepage.
+The homepage opens with the Genesis Kernel's theoretical 3D packet preview and
+offers Google sign-in or **Explore as guest**. Guest browsing opens the interactive
+architecture guide and the original Digital Seed briefing without a Firebase
+account. The original briefing is available below the guide as an expandable
+section. Signed-in accounts still use the existing Firestore account-status check.
+
+The public [SHD-CCP Manual](manual/) preserves the supplied architecture overview
+and reserves five linked chapters for expansion. Edit its article fragments,
+navigation manifest, and shared template, then regenerate the static pages with
+`python3 manual/build.py` (also included in `npm run build`). See
+[the chapter authoring guide](manual/chapters/README.md).
 
 Serve the checked-in site directly; no build is needed to view it:
 
@@ -45,9 +52,12 @@ Serve the checked-in site directly; no build is needed to view it:
 python3 -m http.server 8000
 ```
 
-The guide's JavaScript is in `assets/explainer.js`, and its scoped styles are in
-`assets/explainer.css`. Tailwind CSS and Three.js are served from checked-in local
-assets. After changing utility classes in the HTML or JavaScript, rebuild them:
+The guide's JavaScript is in `assets/explainer.js`, its scoped styles are in
+`assets/explainer.css`, and guest-session behavior is in `assets/site-session.js`.
+The embedded visualizer also works as the standalone `genesis/` page, with source
+assets in `genesis/assets/`. Tailwind CSS, Three.js, and OrbitControls are served
+from checked-in local assets. After changing utility classes or manual sources,
+rebuild them:
 
 ```sh
 npm ci
@@ -70,8 +80,8 @@ npm test
 
 The tests automatically use `/usr/bin/chromium` when present; alternatively set
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` or install Playwright's browser as above.
-They cover the signed-out gate, allowed/denied/unverified account states, guide
-interactions, prompt loading, responsive layout, and rendering fallback. Firebase
+They cover the public preview, guest entry without Firebase, account states, guide
+interactions, manual navigation, prompt loading, responsive layout, and rendering fallback. Firebase
 responses are mocked in tests; live Google sign-in and Firestore authorization
 must be verified separately using [the Firebase setup guide](docs/FIREBASE_SETUP.md).
 
