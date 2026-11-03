@@ -1,0 +1,88 @@
+#interactive-explainer {
+    background-color: #060913;
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+#interactive-explainer .glass-card {
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(56, 189, 248, 0.16);
+}
+
+#interactive-explainer .glass-sub {
+    background: rgba(9, 14, 28, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+#interactive-explainer .bit-cell {
+    transition: transform 0.14s ease;
+    user-select: none;
+}
+
+#interactive-explainer .bit-cell:hover {
+    transform: scale(1.12);
+    z-index: 10;
+}
+
+#interactive-explainer canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#interactive-explainer :is(button, a, select, input, textarea):focus-visible {
+    outline: 2px solid #67e8f9;
+    outline-offset: 3px;
+}
+
+#interactive-explainer :is(section, [id^='mod-']) {
+    scroll-margin-top: 2rem;
+}
+
+#interactive-explainer :is(.grid, .flex) > * {
+    min-width: 0;
+}
+
+#interactive-explainer :is(input, select, textarea) {
+    max-width: 100%;
+}
+
+#interactive-explainer #bit-grid-container {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+#interactive-explainer ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#interactive-explainer ::-webkit-scrollbar-track {
+    background: #060913;
+}
+
+#interactive-explainer ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+
+#interactive-explainer ::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+@media (min-width: 640px) {
+    #interactive-explainer #bit-grid-container {
+        grid-template-columns: repeat(16, minmax(0, 1fr));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #interactive-explainer *,
+    #interactive-explainer *::before,
+    #interactive-explainer *::after {
+        transition: none;
+        scroll-behavior: auto;
+    }
+}

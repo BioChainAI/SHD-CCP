@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHD-CCP Universal GAI Language</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>SHD-CCP — Interactive Architecture Guide</title>
+    <meta name="description" content="Explore SHD-CCP with an interactive packet pipeline, 64-bit voxel register, toroidal models, and the original Digital Seed briefing.">
+    <link rel="stylesheet" href="assets/tailwind.css">
+    <link rel="stylesheet" href="assets/explainer.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- three.js for 3D background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="assets/vendor/three.min.js"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        .hidden { display: none !important; }
+        html { scroll-behavior: smooth; }
+        #digital-seed-briefing { scroll-margin-top: 1rem; }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #000000;
@@ -98,14 +104,19 @@
                 </div>
             </div>
 
-            <h1 class="text-4xl md:text-5xl font-bold text-cyan-300 pt-20 md:pt-0">The Digital Seed</h1>
-            <p class="mt-2 text-lg text-cyan-400">How One 64-bit Key Creates a Unique Digital Universe</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-cyan-300 pt-20 md:pt-0">SHD-CCP, Explained</h1>
+            <p class="mt-2 text-lg text-cyan-400">An interactive introduction to 64-bit registers, geometric models, and the Digital Seed</p>
+            <nav aria-label="Homepage sections" class="mt-6 flex flex-wrap justify-center gap-3 text-sm text-cyan-300">
+                <a href="#interactive-explainer" class="underline underline-offset-4">Interactive guide</a>
+                <a href="#digital-seed-briefing" class="underline underline-offset-4">Digital Seed briefing</a>
+                <a href="Geometric_Engine/Geometric_Engine_Tutorial.html" class="underline underline-offset-4">Geometric Engine</a>
+            </nav>
         </header>
 
         <div id="auth-gate" class="max-w-xl mx-auto p-8 md:p-10 rounded-lg card-style text-center">
             <i class="fas fa-lock fa-3x text-cyan-500 mb-4"></i>
             <h2 class="text-2xl font-bold text-cyan-200 mb-3">Sign In Required</h2>
-            <p class="text-cyan-400 mb-6">Sign in with Google to view the SHD-CCP Digital Seed briefing.</p>
+            <p class="text-cyan-400 mb-6">Sign in with Google to explore the interactive architecture guide and Digital Seed briefing.</p>
             <button id="gate-auth-button" class="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-6 rounded-lg transition-colors text-lg">
                 <i class="fa-brands fa-google"></i>
                 <span>Sign In with Google</span>
@@ -115,6 +126,677 @@
 
         <div id="main-content" class="hidden">
 
+            <section id="interactive-explainer" class="text-slate-200 mb-12" aria-label="SHD-CCP interactive architecture guide">
+<nav aria-label="Interactive guide modules" class="flex flex-wrap items-center gap-2 text-xs font-mono mb-6">
+                <a href="#mod-pipeline" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">00.Pipeline</a>
+                <a href="#mod-ascii" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">01.ASCII-Trap</a>
+                <a href="#mod-cube" class="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 transition">02.Cube+FPGA</a>
+                <a href="#mod-torus" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">03.Torus</a>
+                <a href="#mod-alu" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">04.O(1)-ALU</a>
+                <a href="#mod-cymatic" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">05.Cymatic</a>
+                <a href="#mod-ttp" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">06.TTP+Falcon</a>
+                <a href="#mod-faq" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">07.FAQ</a>
+                <a href="#mod-prompts" class="px-2.5 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 transition">08.Prompts</a>
+            </nav>
+<div class="space-y-12">
+
+        <!-- HERO BANNER -->
+        <section class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-8 space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono">
+                        <span>INTERACTIVE ARCHITECTURE GUIDE</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                        From a <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">64-bit register</span> to a geometric model
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Explore how the Symbolic High-Dimensional Context-Compression Protocol (SHD-CCP) represents a 64-bit word as a 4×4×4 grid. Follow a packet through the proposed architecture, flip individual bits, and compare example geometric mappings. Start with the pipeline, then try the cube and torus controls.
+                    </p>
+                </div>
+
+                <div class="lg:col-span-4 grid grid-cols-2 gap-3 font-mono">
+                    <div class="glass-sub p-4 rounded-2xl border-l-4 border-l-cyan-400">
+                        <div class="text-[11px] text-slate-400">CORE PAYLOAD</div>
+                        <div class="text-xl font-bold text-white mt-1">64 Bits</div>
+                        <div class="text-[11px] text-cyan-400 mt-0.5">4×4×4 Voxel Cube</div>
+                    </div>
+                    <div class="glass-sub p-4 rounded-2xl border-l-4 border-l-purple-400">
+                        <div class="text-[11px] text-slate-400">LPF FRAME</div>
+                        <div class="text-xl font-bold text-white mt-1">128 Bits</div>
+                        <div class="text-[11px] text-purple-400 mt-0.5">16-Byte Logical Packet Frame</div>
+                    </div>
+                    <div class="glass-sub p-4 rounded-2xl border-l-4 border-l-emerald-400">
+                        <div class="text-[11px] text-slate-400">SIMILARITY DEMO</div>
+                        <div class="text-xl font-bold text-white mt-1">XOR + POPCNT</div>
+                        <div class="text-[11px] text-emerald-400 mt-0.5">Fixed-width comparison</div>
+                    </div>
+                    <div class="glass-sub p-4 rounded-2xl border-l-4 border-l-amber-400">
+                        <div class="text-[11px] text-slate-400">WIRE ESTIMATE</div>
+                        <div class="text-xl font-bold text-white mt-1">10.78 μs</div>
+                        <div class="text-[11px] text-amber-400 mt-0.5">@1Gbps Falcon-512</div>
+                    </div>
+                </div>
+            </div>
+        <p class="mt-6 p-4 rounded-xl bg-slate-950/70 border border-slate-700 text-sm text-slate-300 leading-relaxed">These interactive models illustrate the proposed SHD-CCP design. Concept mappings are preset examples. The tensor demo uses JavaScript arithmetic, and packet times estimate serialization only; neither is a production benchmark or a security verification.</p>
+        </section>
+
+        <!-- MODULE 00: END-TO-END 7-STAGE PIPELINE TRACER -->
+        <section id="mod-pipeline" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Module 00 • Complete Theory of Operation</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Interactive 7-Stage End-to-End SHD-CCP Pipeline Tracer</h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="stepPipeline(-1)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 border border-slate-700 transition cursor-pointer">← Prev Stage</button>
+                    <button onclick="stepPipeline(1)" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-xs font-mono text-cyan-300 border border-cyan-500/40 transition cursor-pointer">Next Stage →</button>
+                </div>
+            </div>
+
+            <!-- Stage Pills -->
+            <div id="pipeline-pills" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2"></div>
+
+            <!-- Active Stage Detail Panel -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                <div class="lg:col-span-7 glass-sub rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span id="pipe-stage-badge" class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">STAGE 1 OF 7</span>
+                            <span id="pipe-stage-hw" class="text-xs font-mono text-slate-400">Target: Compiler / Codex LUT</span>
+                        </div>
+                        <h3 id="pipe-stage-title" class="text-lg sm:text-xl font-bold text-white">1. Symbolic / Tensor Ingestion</h3>
+                        <p id="pipe-stage-desc" class="text-sm text-slate-300 leading-relaxed"></p>
+                    </div>
+                    <div id="pipe-stage-takeaway" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-cyan-200 font-mono"></div>
+                </div>
+
+                <div class="lg:col-span-5 glass-sub rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-mono text-slate-400">LIVE REGISTER / HARDWARE TRACE</span>
+                        <span class="text-[11px] font-mono text-emerald-400">Deterministic State</span>
+                    </div>
+                    <pre id="pipe-stage-code" class="text-xs font-mono text-cyan-300 bg-black/50 p-4 rounded-xl overflow-x-auto leading-relaxed flex-1"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 01: THE ASCII TRAP VS. 3D PERIODIC TABLE ANALOGY LAB -->
+        <section id="mod-ascii" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-amber-400">Module 01 • The Alphabetical Phonebook vs. 3D Periodic Table</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Interactive Lab: Why Raw ASCII Binary Fails to Scale</h2>
+                </div>
+                <div class="flex flex-wrap gap-2" id="ascii-pair-buttons">
+                    <button onclick="selectAsciiPair('cat_dog')" id="pair-btn-cat_dog" class="px-3 py-1.5 rounded-xl text-xs font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 cursor-pointer">"cat" vs "dog"</button>
+                    <button onclick="selectAsciiPair('cat_car')" id="pair-btn-cat_car" class="px-3 py-1.5 rounded-xl text-xs font-mono bg-slate-800 text-slate-300 border border-slate-700 cursor-pointer">"cat" vs "car"</button>
+                    <button onclick="selectAsciiPair('gold_silver')" id="pair-btn-gold_silver" class="px-3 py-1.5 rounded-xl text-xs font-mono bg-slate-800 text-slate-300 border border-slate-700 cursor-pointer">"Gold" vs "Silver"</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Legacy ASCII Side -->
+                <div class="glass-sub rounded-2xl p-5 border-t-4 border-t-rose-500 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-[11px] font-mono uppercase text-rose-400">Legacy Pipeline (The Alphabetical Phonebook)</span>
+                            <h3 class="text-base font-bold text-white">24-Bit / 64-Bit Raw ASCII Character Stream</h3>
+                        </div>
+                        <span id="ascii-verdict-badge" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30">False Geometry</span>
+                    </div>
+
+                    <div class="space-y-2 font-mono text-xs">
+                        <div class="p-3 rounded-xl bg-black/40 border border-slate-800 flex items-center justify-between">
+                            <span id="ascii-label-a" class="text-slate-300 font-bold">"cat"</span>
+                            <span id="ascii-bits-a" class="text-rose-300">01100011 01100001 01110100</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-slate-800 flex items-center justify-between">
+                            <span id="ascii-label-b" class="text-slate-300 font-bold">"dog"</span>
+                            <span id="ascii-bits-b" class="text-rose-300">01100100 01101111 01100111</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-950/30 border border-rose-500/30 flex items-center justify-between">
+                            <span class="text-rose-200">ASCII Bitwise Hamming Distance:</span>
+                            <span id="ascii-hamming" class="text-sm font-bold text-rose-400">9 bits flipped (Scrambling Tax)</span>
+                        </div>
+                    </div>
+
+                    <p id="ascii-explanation" class="text-xs text-slate-300 leading-relaxed"></p>
+                </div>
+
+                <!-- SHD-CCP Cubic/Toroidal Side -->
+                <div class="glass-sub rounded-2xl p-5 border-t-4 border-t-emerald-500 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-[11px] font-mono uppercase text-emerald-400">SHD-CCP Pipeline (3D Periodic Table on a Torus)</span>
+                            <h3 class="text-base font-bold text-white">64-Bit Cubic Register (<span class="whitespace-normal">ℤ₄³</span> Topological Invariants)</h3>
+                        </div>
+                        <span id="shd-verdict-badge" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Homologous Orbit</span>
+                    </div>
+
+                    <div class="space-y-2 font-mono text-xs">
+                        <div class="p-3 rounded-xl bg-black/40 border border-slate-800 flex items-center justify-between">
+                            <span id="shd-label-a" class="text-slate-300 font-bold">"cat"</span>
+                            <span id="shd-hex-a" class="text-emerald-300">0xF942_6A01_8520_0012</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-black/40 border border-slate-800 flex items-center justify-between">
+                            <span id="shd-label-b" class="text-slate-300 font-bold">"dog"</span>
+                            <span id="shd-hex-b" class="text-emerald-300">0xF942_6A01_8520_0018</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex items-center justify-between">
+                            <span class="text-emerald-200">Upper 48-Bit Macro/Meso XOR:</span>
+                            <span id="shd-upper-xor" class="text-sm font-bold text-emerald-400">0x0000_0000_0000 (100% Match!)</span>
+                        </div>
+                    </div>
+
+                    <p id="shd-explanation" class="text-xs text-slate-300 leading-relaxed"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 02: 64-BIT CUBIC REGISTER LAB + PSEUDO-FPGA SWITCHER + 2D KERNEL DESIGNER -->
+        <section id="mod-cube" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Module 02 • 4×4×4 Voxel Lattice & Polymorphic Pseudo-FPGA</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Interactive 64-Bit Cubic Register, Pseudo-FPGA Switcher & 2D Kernel Designer</h2>
+                </div>
+
+                <!-- Concept Preset Buttons -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-mono text-slate-400">Preset Seed:</span>
+                    <button onclick="loadConceptPreset('cat')" class="px-3 py-1.5 rounded-xl text-xs font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 cursor-pointer">"cat"</button>
+                    <button onclick="loadConceptPreset('dog')" class="px-3 py-1.5 rounded-xl text-xs font-mono bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 cursor-pointer">"dog"</button>
+                    <button onclick="loadConceptPreset('car')" class="px-3 py-1.5 rounded-xl text-xs font-mono bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 cursor-pointer">"car"</button>
+                    <button onclick="loadConceptPreset('fpga_tensor')" class="px-3 py-1.5 rounded-xl text-xs font-mono bg-purple-500/20 text-purple-300 border border-purple-500/40 hover:bg-purple-500/30 cursor-pointer">TTP Float (Form 3)</button>
+                </div>
+            </div>
+
+            <!-- PSEUDO-FPGA MULTI-MODE REGISTER SWITCHER -->
+            <div class="glass-sub rounded-2xl p-4 space-y-3 border border-cyan-500/25">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono text-[11px] font-bold">PSEUDO-FPGA MULTIPLEXER</span>
+                        <span class="text-xs text-slate-300">Choose a field view for the four 16-bit slabs. This demonstration changes the field labels; it does not rewrite the encoded <code class="text-cyan-300">Form ID (0..15)</code>.</span>
+                    </div>
+                    <span id="fpga-active-mode-badge" class="text-xs font-mono text-amber-300">Form ID 12–15 • Toroidal Ontology Mode</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                    <button onclick="setFpgaMode('toroidal')" id="fpga-btn-toroidal" class="p-3 rounded-xl text-left border transition cursor-pointer bg-cyan-500/15 border-cyan-500/50">
+                        <div class="text-[11px] font-mono text-cyan-300 font-bold">Form ID 12–15 • Toroidal Mode</div>
+                        <div class="text-xs text-white font-semibold mt-0.5">Cubic → Toroidal Ontology</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Z3: Quat Core | Z2: Trefoil | Z1: Major Θ | Z0: Minor Φ</div>
+                    </button>
+
+                    <button onclick="setFpgaMode('ttp_mode_a')" id="fpga-btn-ttp_mode_a" class="p-3 rounded-xl text-left border transition cursor-pointer bg-slate-900/80 border-slate-800 hover:border-slate-700">
+                        <div class="text-[11px] font-mono text-purple-300 font-bold">Form ID 3 • TTP Mode A</div>
+                        <div class="text-xs text-white font-semibold mt-0.5">Lossless Tensor Reconstruction</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Z3: FP16 Delta | Z2: Form/Scale | Z1–Z0: 4×FP8 Quad-Slice</div>
+                    </button>
+
+                    <button onclick="setFpgaMode('ttp_mode_b')" id="fpga-btn-ttp_mode_b" class="p-3 rounded-xl text-left border transition cursor-pointer bg-slate-900/80 border-slate-800 hover:border-slate-700">
+                        <div class="text-[11px] font-mono text-emerald-300 font-bold">Form ID 4–11 • TTP Mode B</div>
+                        <div class="text-xs text-white font-semibold mt-0.5">Grand Codex Teleportation</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Z3: Sub-Region | Z2: Codex Shape | Z1: Face | Z0: Vertex</div>
+                    </button>
+
+                    <button onclick="setFpgaMode('cymatic')" id="fpga-btn-cymatic" class="p-3 rounded-xl text-left border transition cursor-pointer bg-slate-900/80 border-slate-800 hover:border-slate-700">
+                        <div class="text-[11px] font-mono text-amber-300 font-bold">Form ID 0–2 • Cymatic Cascade</div>
+                        <div class="text-xs text-white font-semibold mt-0.5">Tri-Tier Shader & Zeta Return</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Z3: Shape Pwr | Z2: TQF Torsion | Z1: Agent A ω | Z0: ΔT</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3D CUBE + 64-BIT REGISTER MATRIX -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: 3D Three.js Voxel Cube -->
+                <div class="lg:col-span-6 glass-sub rounded-2xl p-4 flex flex-col justify-between space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <h3 class="text-sm font-bold text-white">3D <span class="whitespace-normal">4 × 4 × 4</span> Voxel Lattice (<span class="whitespace-normal">ℤ₄³</span>)</h3>
+                            <p class="text-[11px] text-slate-400">Drag to orbit • Click any bit or 2D slab cell to toggle</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <button id="cube-autorotate-btn" onclick="toggleCubeAutoRotate()" class="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700 transition cursor-pointer">
+                                ⟳ Auto-Rotate: OFF
+                            </button>
+                            <button id="ghost-cubes-btn" onclick="toggleGhostCubes()" class="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 hover:bg-cyan-500/30 transition cursor-pointer">
+                                8 Ghost Cubes: ON
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3D Canvas Container -->
+                    <div id="cube-canvas-container" class="w-full h-[380px] rounded-xl bg-black/60 border border-slate-800/90 relative overflow-hidden"></div>
+
+                    <!-- Slab Filter Pills -->
+                    <div class="grid grid-cols-5 gap-1.5 text-[11px] font-mono">
+                        <button onclick="setSlabFilter('all')" class="px-2 py-1 rounded bg-slate-800 text-white border border-slate-600 cursor-pointer">All 64b</button>
+                        <button onclick="setSlabFilter(3)" class="px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 cursor-pointer">Z=3 [63:48]</button>
+                        <button onclick="setSlabFilter(2)" class="px-2 py-1 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 cursor-pointer">Z=2 [47:32]</button>
+                        <button onclick="setSlabFilter(1)" class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 cursor-pointer">Z=1 [31:16]</button>
+                        <button onclick="setSlabFilter(0)" class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 cursor-pointer">Z=0 [15:00]</button>
+                    </div>
+                </div>
+
+                <!-- Right: 64-Bit Register Matrix & Dynamic Field Breakdown -->
+                <div class="lg:col-span-6 glass-sub rounded-2xl p-4 flex flex-col justify-between space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div>
+                            <span class="text-[11px] font-mono text-slate-400">LIVE 64-BIT REGISTER HEX</span>
+                            <div id="live-register-hex" class="text-base sm:text-lg font-mono font-bold text-cyan-300">0xF942_6A01_8520_0012</div>
+                        </div>
+                        <div class="text-right font-mono">
+                            <span class="text-[11px] text-slate-400">POPCNT (Active Voxels)</span>
+                            <div id="live-register-popcnt" class="text-base font-bold text-emerald-400">21 / 64 bits</div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic 4-Slab Legend Cards -->
+                    <div id="fpga-slab-cards" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+
+                    <!-- 64-Bit Interactive Grid -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                            <span>MSB (Bit 63 • Z=3)</span>
+                            <span>Click any bit to flip state</span>
+                            <span>LSB (Bit 0 • Z=0)</span>
+                        </div>
+                        <div id="bit-grid-container" class="grid grid-cols-8 sm:grid-cols-[repeat(16,minmax(0,1fr))] gap-1 p-2.5 rounded-xl bg-black/50 border border-slate-800"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE 2D PLANAR SLAB KERNEL DESIGNER (4 × [4×4] Z-SLABS) -->
+            <div class="glass-sub rounded-2xl p-5 space-y-4 border border-purple-500/30">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                    <div>
+                        <span class="text-[11px] font-mono uppercase text-purple-400">Hardware 2D LUT Spatial Kernel Studio • Rule 2 Alignment</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white">Interactive 2D Planar Slab Kernel Designer (<span class="whitespace-normal">4 × [4 × 4]</span> Z-Slices)</h3>
+                        <p class="text-xs text-slate-400">Each horizontal <span class="whitespace-normal">4 × 4</span> slice of the cube is a 16-bit word (<code class="text-purple-300">uint16_t</code>). Apply 2D geometric kernels or click cells directly.</p>
+                    </div>
+
+                    <!-- Kernel Controls -->
+                    <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+                        <select id="kernel-target-slab" aria-label="Kernel target slab" class="bg-slate-900 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5">
+                            <option value="all">Target: All 4 Z-Slabs</option>
+                            <option value="3">Target: Z=3 [63:48]</option>
+                            <option value="2">Target: Z=2 [47:32]</option>
+                            <option value="1">Target: Z=1 [31:16]</option>
+                            <option value="0">Target: Z=0 [15:00]</option>
+                        </select>
+                        <select id="kernel-op-mode" aria-label="Kernel operation" class="bg-slate-900 text-cyan-300 border border-slate-700 rounded-lg px-2.5 py-1.5">
+                            <option value="write">Op: Write (=)</option>
+                            <option value="xor">Op: XOR (⊕)</option>
+                            <option value="or">Op: OR (|)</option>
+                            <option value="and">Op: AND (&)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Kernel Stamp Presets -->
+                <div class="flex flex-wrap gap-2 text-xs font-mono">
+                    <button onclick="apply2DKernel(0x0660)" class="px-3 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 cursor-pointer">Stamp Inner 2×2 Core (0x0660)</button>
+                    <button onclick="apply2DKernel(0xF99F)" class="px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 cursor-pointer">Stamp Outer Boundary Wall (0xF99F)</button>
+                    <button onclick="apply2DKernel(0x9669)" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 cursor-pointer">Stamp Trefoil Cross-Diag (0x9669)</button>
+                    <button onclick="apply2DKernel(0x5A5A)" class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 cursor-pointer">Parity Checkerboard (0x5A5A)</button>
+                    <button onclick="rotate2DSlabs90()" class="px-3 py-1.5 rounded-xl bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/40 cursor-pointer">↻ Rotate 4×4 Slab(s) 90°</button>
+                </div>
+
+                <!-- Four 4x4 2D Slab Matrices -->
+                <div id="planar-slabs-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- MODULE 03: 3D TOROIDAL MANIFOLD & TORSIONAL MARKOV PUMP -->
+        <section id="mod-torus" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-emerald-400">Module 03 • Double-Cover 720:1 Spinor Projection</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Interactive 3D Toroidal Manifold & Torsional Markov Pump</h2>
+                </div>
+                <button id="torus-pump-btn" onclick="toggleMarkovPump()" class="px-3.5 py-1.5 rounded-xl text-xs font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-pointer">
+                    ⏸ Torsional Markov Pump: RUNNING
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-7 glass-sub rounded-2xl p-4 space-y-3">
+                    <div id="torus-canvas-container" class="w-full h-[390px] rounded-xl bg-black/60 border border-slate-800 relative overflow-hidden"></div>
+                    <div class="flex flex-wrap items-center justify-between text-xs font-mono text-slate-400 px-1">
+                        <span>🟢 "cat" (<span class="whitespace-normal">Θ=42°, Φ=18°</span>)</span>
+                        <span>🩵 "dog" (<span class="whitespace-normal">Θ=42°, Φ=24°</span>)</span>
+                        <span>🟠 "car" (<span class="whitespace-normal">Θ=215°, Φ=196°</span>)</span>
+                        <span>🟣 Active Probe Trajectory</span>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 glass-sub rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-4">
+                        <h3 class="text-base font-bold text-white">Toroidal Phase & Frenet-Serret Controls</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Notice how <strong>"cat"</strong> and <strong>"dog"</strong> sit on the exact same major poloidal ring (<span class="whitespace-normal">Θ = 42°</span>), separated only by a <span class="whitespace-normal">6°</span> minor poloidal spin (<span class="whitespace-normal">ΔΦ = 6°</span>). Meanwhile, <strong>"car"</strong> sits on the opposite side of the torus (<span class="whitespace-normal">Θ = 215°</span>).
+                        </p>
+
+                        <div class="space-y-3 font-mono text-xs">
+                            <div>
+                                <div class="flex justify-between text-slate-300 mb-1">
+                                    <span>Major Toroidal Angle (<span class="whitespace-normal">Θ</span> • Z=1 Slab):</span>
+                                    <span id="torus-theta-val" class="text-emerald-400 font-bold">42°</span>
+                                </div>
+                                <input id="torus-theta-slider" aria-label="Toroidal major angle Θ" type="range" min="0" max="360" value="42" oninput="updateTorusSliders()" class="w-full accent-emerald-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-slate-300 mb-1">
+                                    <span>Minor Poloidal Spin (<span class="whitespace-normal">Φ</span> • Z=0 Slab):</span>
+                                    <span id="torus-phi-val" class="text-cyan-400 font-bold">18°</span>
+                                </div>
+                                <input id="torus-phi-slider" aria-label="Toroidal minor angle Φ" type="range" min="0" max="360" value="18" oninput="updateTorusSliders()" class="w-full accent-cyan-400 cursor-pointer">
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-slate-300 mb-1">
+                                    <span>Frenet-Serret Torsion (<span class="whitespace-normal">τ</span> Winding Ratio):</span>
+                                    <span id="torus-tau-val" class="text-purple-400 font-bold">7:3 Knot</span>
+                                </div>
+                                <input id="torus-tau-slider" aria-label="Torsion ratio τ" type="range" min="1" max="12" value="7" oninput="updateTorusSliders()" class="w-full accent-purple-400 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-black/50 border border-slate-800 font-mono text-xs space-y-1.5">
+                        <div class="text-slate-400">TOROIDAL PROJECTION EQUATIONS</div>
+                        <div class="text-cyan-300"><span class="whitespace-normal">X(Θ,Φ) = (R + rcos Φ)cos Θ</span></div>
+                        <div class="text-purple-300"><span class="whitespace-normal">Y(Θ,Φ) = (R + rcos Φ)sin Θ</span></div>
+                        <div class="text-emerald-300"><span class="whitespace-normal">Z(Φ) = rsin Φ</span></div>
+                        <div id="torus-live-xyz" class="text-slate-300 pt-1 border-t border-slate-800">Probe XYZ: (3.21, 2.89, 0.36)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 04: LIVE O(1) 64-BIT HARDWARE ALU COMPARATOR -->
+        <section id="mod-alu" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Module 04 • Single-Cycle Bitwise Distance vs. <span class="whitespace-normal">O(D)</span> Cosine Similarity</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Live <span class="whitespace-normal">O(1)</span> 64-Bit ALU Comparator (<code class="text-cyan-300">XOR</code> + <code class="text-cyan-300">POPCNT</code>)</h2>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+                    <select id="alu-select-a" aria-label="Register A example" onchange="runAluComparison()" class="bg-slate-900 text-cyan-300 border border-slate-700 rounded-xl px-3 py-1.5">
+                        <option value="cat" selected>Reg A: "cat"</option>
+                        <option value="dog">Reg A: "dog"</option>
+                        <option value="wolf">Reg A: "wolf"</option>
+                        <option value="car">Reg A: "car"</option>
+                    </select>
+                    <span class="text-slate-500">⊕</span>
+                    <select id="alu-select-b" aria-label="Register B example" onchange="runAluComparison()" class="bg-slate-900 text-purple-300 border border-slate-700 rounded-xl px-3 py-1.5">
+                        <option value="cat">Reg B: "cat"</option>
+                        <option value="dog" selected>Reg B: "dog"</option>
+                        <option value="wolf">Reg B: "wolf"</option>
+                        <option value="car">Reg B: "car"</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="alu-results-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-4 font-mono text-xs"></div>
+        </section>
+
+        <!-- MODULE 05: INTERACTIVE CYMATIC CASCADE & TRI-TIER GOVERNANCE SIMULATOR -->
+        <section id="mod-cymatic" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-pink-400">Module 05 • Micro → Meso → Macro → Zero-Point Subsumption</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Interactive Cymatic Cascade, TQF Sieve & Zeta-Pole Return (<span class="whitespace-normal">Δ T</span>)</h2>
+                </div>
+                <button onclick="harmonizeCymaticAgents()" class="px-3.5 py-1.5 rounded-xl text-xs font-mono bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 cursor-pointer">
+                    ✨ Harmonize Triad (Achieve ΔT = 0 Equilibrium)
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <!-- Left Controls: Agent A (Master Clock), Agent B, Agent C -->
+                <div class="lg:col-span-6 glass-sub rounded-2xl p-5 space-y-4">
+                    <div class="space-y-1">
+                        <h3 class="text-base font-bold text-white">Tri-Phase Micro-Agents & Master Clock Governance</h3>
+                        <p class="text-xs text-slate-300">
+                            <strong>Agent A (<span class="whitespace-normal">0°</span>)</strong> acts as the <code class="text-pink-300">Master Clock (derivedMacroFreq)</code>. If <strong>Agent B (<span class="whitespace-normal">+120°</span>)</strong> or <strong>Agent C (<span class="whitespace-normal">-120°</span>)</strong> diverge in tension/torsion, the <strong>Triple Quad Formula (TQF)</strong> triangle warps, generating a non-zero <strong>Zeta-Pole Scalar Return (<span class="whitespace-normal">Δ T</span>)</strong> at the central <span class="whitespace-normal">(3,7)</span> Torus Knot.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 font-mono text-xs">
+                        <div class="p-3 rounded-xl bg-black/40 border border-rose-500/30">
+                            <div class="flex justify-between text-rose-300 mb-1">
+                                <span>🔴 Agent A (0° • Master Clock Oracle Tension):</span>
+                                <span id="cym-a-val">50</span>
+                            </div>
+                            <input id="cym-a-slider" aria-label="Agent A master clock" type="range" min="10" max="95" value="50" oninput="updateCymaticSimulator()" class="w-full accent-rose-500 cursor-pointer">
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-black/40 border border-emerald-500/30">
+                            <div class="flex justify-between text-emerald-300 mb-1">
+                                <span>🟢 Agent B (+120° • Certifier A Tension):</span>
+                                <span id="cym-b-val">50</span>
+                            </div>
+                            <input id="cym-b-slider" aria-label="Agent B phase" type="range" min="10" max="95" value="50" oninput="updateCymaticSimulator()" class="w-full accent-emerald-500 cursor-pointer">
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-black/40 border border-blue-500/30">
+                            <div class="flex justify-between text-blue-300 mb-1">
+                                <span>🔵 Agent C (-120° • Certifier B Tension):</span>
+                                <span id="cym-c-val">50</span>
+                            </div>
+                            <input id="cym-c-slider" aria-label="Agent C phase" type="range" min="10" max="95" value="50" oninput="updateCymaticSimulator()" class="w-full accent-blue-500 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-slate-400">TQF SKEW GRADIENT</span>
+                            <div id="cym-tqf-skew" class="text-lg font-bold text-emerald-400 mt-0.5">0.00% (Symmetric)</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-slate-400">ZETA-POLE RETURN (ΔT)</span>
+                            <div id="cym-delta-t" class="text-lg font-bold text-cyan-300 mt-0.5">ΔT = 0 (Crystallized)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Live SVG Visualizer: TQF Sieve + 4x4x4 Macro Bounce -->
+                <div class="lg:col-span-6 glass-sub rounded-2xl p-5 flex flex-col items-center justify-center space-y-3">
+                    <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400">
+                        <span>Meso TQF Bounding Sieve (<span class="whitespace-normal">120°</span>)</span>
+                        <span id="cym-status-pill" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Phase Cancellation: 100%</span>
+                    </div>
+                    <svg id="cymatic-svg" viewBox="0 0 320 260" class="w-full max-w-[360px] h-[250px] bg-black/50 rounded-xl border border-slate-800">
+                        <!-- 4x4x4 Macro Orthogonal Bounding Box -->
+                        <rect x="35" y="15" width="250" height="230" rx="8" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="4 4"/>
+                        <circle cx="160" cy="130" r="88" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+                        <!-- Manhattan L1 qTri Bounce Path -->
+                        <polyline id="cym-l1-path" points="45,130 160,25 275,130 160,235 45,130" fill="none" stroke="#ec4899" stroke-width="1.5" stroke-opacity="0.45"/>
+                        <!-- TQF Triangle -->
+                        <polygon id="cym-tqf-poly" points="160,55 225,168 95,168" fill="rgba(6, 182, 212, 0.14)" stroke="#22d3ee" stroke-width="2.5"/>
+                        <!-- Center (3,7) Torus Knot Core -->
+                        <circle id="cym-core-circle" cx="160" cy="130" r="14" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="2"/>
+                        <!-- 3 Agent Nodes -->
+                        <circle id="cym-node-a" cx="160" cy="55" r="6" fill="#f43f5e"/>
+                        <circle id="cym-node-b" cx="225" cy="168" r="6" fill="#10b981"/>
+                        <circle id="cym-node-c" cx="95" cy="168" r="6" fill="#3b82f6"/>
+                    </svg>
+                    <p class="text-[11px] font-mono text-slate-400 text-center">
+                        Outer Dashed Frame: <span class="whitespace-normal">4× 4× 4</span> Macro Bounding Walls (`4400` units) • Pink Diamond: `qTri()` Manhattan <span class="whitespace-normal">L₁</span> Bounce • Cyan Triangle: Meso TQF Sieve
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 06: TENSOR TRANSFER PROTOCOL (TTP) & QUANTUM-RESISTANT FALCON PACKET CALCULATOR -->
+        <section id="mod-ttp" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <span class="text-xs font-mono uppercase tracking-wider text-purple-400">Module 06 • Lossless Tensor Transfer & Post-Quantum Wire Framing</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Interactive TTP Mode A/B & Falcon-512 / Falcon-1024 Serialization Calculator</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- TTP Mode A Lossless Float Reconstructor -->
+                <div class="glass-sub rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-purple-300 uppercase">TTP Mode A (Form ID = 3)</span>
+                        <span class="text-xs font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">Illustrative decomposition</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Coarse Value + Residual Demonstration</h3>
+                    <p class="text-xs text-slate-300">
+                        Illustrate the coarse-plus-residual idea with a JavaScript number (<span class="whitespace-normal">f_original</span>) using a rounded coarse value (<span class="whitespace-normal">f_coarse</span>) plus a full-precision residual (<span class="whitespace-normal">f_delta</span>). This example does not encode FP8 or FP16 values:
+                    </p>
+
+                    <div class="space-y-3 font-mono text-xs">
+                        <div>
+                            <label for="ttp-float-input" class="text-slate-400 block mb-1">Input Example Value (<span class="whitespace-normal">f_original</span>):</label>
+                            <input id="ttp-float-input" aria-label="Example value for coarse and residual decomposition" type="number" step="0.0001" value="3.1415926" oninput="updateTtpCalculator()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="p-3 rounded-xl bg-black/40 border border-slate-800">
+                                <div class="text-slate-400">Rounded Coarse (<span class="whitespace-normal">f_coarse</span>)</div>
+                                <div id="ttp-coarse-val" class="text-sm font-bold text-amber-300 mt-1">3.1250000</div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-black/40 border border-slate-800">
+                                <div class="text-slate-400">Residual (<span class="whitespace-normal">f_delta</span>)</div>
+                                <div id="ttp-delta-val" class="text-sm font-bold text-purple-300 mt-1">+0.0165926</div>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex items-center justify-between">
+                            <span class="text-emerald-200">Receiver (<span class="whitespace-normal">f_coarse + f_delta</span>):</span>
+                            <span id="ttp-recon-val" class="text-sm font-bold text-emerald-400">3.1415926 (illustrative sum)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Falcon-512 / 1024 Packet Chaining & Wire Latency -->
+                <div class="glass-sub rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-cyan-300 uppercase">Quantum-Resistant SCP Framing</span>
+                        <div class="flex gap-1.5 font-mono text-xs">
+                            <button onclick="setFalconMode(512)" id="falcon-btn-512" class="px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 cursor-pointer">Falcon-512</button>
+                            <button onclick="setFalconMode(1024)" id="falcon-btn-1024" class="px-2.5 py-1 rounded bg-slate-800 text-slate-400 border border-slate-700 cursor-pointer">Falcon-1024</button>
+                        </div>
+                    </div>
+                    <h3 class="text-base font-bold text-white">LPF + Falcon Packet Serialization Estimate</h3>
+
+                    <div class="space-y-2 font-mono text-xs">
+                        <div class="flex justify-between text-slate-300">
+                            <span>Network Bandwidth Link Speed:</span>
+                            <select id="falcon-bw-select" aria-label="Link bandwidth" onchange="updateFalconCalculator()" class="bg-slate-900 text-cyan-300 border border-slate-700 rounded-lg px-2 py-0.5">
+                                <option value="1000" selected>1 Gbps (10⁹ bps)</option>
+                                <option value="100">100 Mbps (10⁸ bps)</option>
+                                <option value="10">10 Mbps (10⁷ bps)</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5 pt-1">
+                            <div class="p-3 rounded-xl bg-black/40 border border-slate-800">
+                                <div class="text-slate-400">GENESIS PACKET (<span class="whitespace-normal">Pɢ</span>)</div>
+                                <div id="falcon-gen-size" class="text-sm font-bold text-white mt-0.5">1,579 Bytes</div>
+                                <div id="falcon-gen-lat" class="text-xs text-cyan-400 mt-0.5">Serialization: 12.63 μs</div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-black/40 border border-slate-800">
+                                <div class="text-slate-400">CHAINED PACKET (<span class="whitespace-normal">P꜀</span>)</div>
+                                <div id="falcon-chain-size" class="text-sm font-bold text-white mt-0.5">1,348 Bytes</div>
+                                <div id="falcon-chain-lat" class="text-xs text-emerald-400 mt-0.5">Serialization: 10.78 μs</div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+                            <span class="text-slate-300">Steady-State Chained Throughput:</span>
+                            <span id="falcon-pps" class="text-sm font-bold text-amber-300">92,730 packets/sec</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 07: INTERACTIVE SHD-CCP F.A.Q. HUB -->
+        <section id="mod-faq" class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono uppercase tracking-wider text-cyan-400">Module 07 • Addressing Skeptics & Core Theory Questions</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Frequently Asked Questions (F.A.Q.)</h2>
+                </div>
+                <button onclick="copyFaqSummary()" id="copy-faq-btn" class="px-3.5 py-1.5 rounded-xl text-xs font-mono bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 cursor-pointer">
+                    📋 Copy Critic Response Summary
+                </button>
+            </div>
+
+            <div id="faq-accordion-container" class="space-y-3"></div>
+        </section>
+
+        <!-- MODULE 08: MINIMIZED-BY-DEFAULT COLLAPSIBLE LLM SYSTEM PROMPT & GITHUB LOADER -->
+        <section id="mod-prompts" class="glass-card rounded-3xl overflow-hidden border border-purple-500/30">
+            <!-- Collapsible Header Bar -->
+            <button onclick="togglePromptModule()" aria-expanded="false" aria-controls="prompt-module-body" class="w-full p-6 sm:p-8 flex items-center justify-between text-left hover:bg-slate-900/40 transition cursor-pointer">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-mono uppercase tracking-wider text-purple-400">Module 08 • LLM Protocol Bootloader & GitHub Markdown Sync</span>
+                        <span id="prompt-collapse-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">Minimized by Default • Click to Expand</span>
+                    </div>
+                    <h2 class="text-lg sm:text-2xl font-bold text-white">LLM System Prompts for Teaching SHD-CCP & GitHub Repository Folder Loader</h2>
+                </div>
+                <span id="prompt-chevron" class="text-2xl text-purple-400 font-mono transition-transform duration-200">[+]</span>
+            </button>
+
+            <!-- Collapsible Body (Hidden by default!) -->
+            <div id="prompt-module-body" class="hidden border-t border-slate-800 p-6 sm:p-8 space-y-6 bg-slate-950/60">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left Column: Built-in Markdown Prompt Selector + GitHub Folder Scanner -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="glass-sub p-4 rounded-2xl space-y-3">
+                            <label for="builtin-prompt-select" class="text-xs font-mono text-purple-300 block">1. SELECT BUILT-IN SHD-CCP MARKDOWN PROMPT (.md)</label>
+                            <select id="builtin-prompt-select" aria-label="Markdown prompt" onchange="selectBuiltinPrompt()" class="w-full bg-slate-900 text-white border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono">
+                                <option value="01_shd_ccp_core_bootloader.md">01_shd_ccp_core_bootloader.md (Core 64-Bit Cube)</option>
+                                <option value="02_pseudo_fpga_form_modes.md">02_pseudo_fpga_form_modes.md (Form ID 0..15 LUT)</option>
+                                <option value="03_toroidal_markov_pump.md">03_toroidal_markov_pump.md (Toroidal & Spinor Math)</option>
+                                <option value="04_cymatic_cascade_tqf.md">04_cymatic_cascade_tqf.md (Micro-Meso-Macro Cascade)</option>
+                                <option value="05_master_shd_ccp_protocol_bundle.md">05_master_shd_ccp_protocol_bundle.md (Full Spec)</option>
+                            </select>
+                        </div>
+
+                        <div class="glass-sub p-4 rounded-2xl space-y-3">
+                            <label for="github-folder-url" class="text-xs font-mono text-cyan-300 block">2. GITHUB REPOSITORY FOLDER MARKDOWN SCANNER</label>
+                            <p class="text-[11px] text-slate-400">
+                                Point to a JSON folder manifest or GitHub Contents API URL (<code class="text-cyan-300">./prompts</code>) or GitHub Contents API URL (<code class="text-cyan-300">https://api.github.com/repos/{owner}/{repo}/contents/prompts</code>) to dynamically populate `.md` prompts:
+                            </p>
+                            <div class="flex gap-2">
+                                <input id="github-folder-url" aria-label="GitHub Contents API folder URL" type="text" value="https://api.github.com/repos/BioChainAI/SHD-CCP/contents/prompts" placeholder="https://api.github.com/repos/user/shd-ccp/contents/prompts" class="flex-1 bg-slate-900 text-xs font-mono text-slate-200 border border-slate-700 rounded-xl px-3 py-2">
+                                <button onclick="scanGithubPromptsFolder()" class="px-3 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono cursor-pointer">Scan</button>
+                            </div>
+                            <div role="status" id="github-scan-status" class="text-[11px] font-mono text-slate-400">Ready. Five built-in prompts are available without a network request.</div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Live Markdown Prompt Viewer & Copy Box -->
+                    <div class="lg:col-span-7 glass-sub p-4 rounded-2xl flex flex-col justify-between space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span id="active-prompt-filename" class="text-xs font-mono text-purple-300 font-bold">prompts/01_shd_ccp_core_bootloader.md</span>
+                            <button onclick="copyActivePrompt()" id="copy-prompt-btn" class="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 text-xs font-mono cursor-pointer">
+                                📋 Copy Markdown Prompt
+                            </button>
+                        </div>
+                        <textarea id="prompt-markdown-viewer" aria-label="Selected Markdown prompt" rows="12" readonly spellcheck="false" class="w-full bg-black/60 text-slate-200 font-mono text-xs p-4 rounded-xl border border-slate-800 focus:outline-none leading-relaxed"></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+            </section>
+            <details id="digital-seed-briefing" class="mb-10 rounded-lg card-style p-6 md:p-8">
+                <summary class="text-2xl font-bold text-cyan-200 cursor-pointer">The Digital Seed — original briefing</summary>
+                <div class="mt-8">
             <!-- Section 1: Introduction -->
             <div class="mb-10 p-6 md:p-8 rounded-lg card-style">
                 <h2 class="text-3xl font-bold text-cyan-200 mb-4">The Master Seed Concept</h2>
@@ -262,9 +944,13 @@
                 </a>
             </div>
 
+                </div>
+            </details>
         </div>
 
     </div>
+
+    <script defer src="assets/explainer.js"></script>
 
     <script type="module">
         // --- FIREBASE IMPORTS ---
@@ -345,6 +1031,9 @@
 
         // --- FIREBASE AUTHENTICATION ---
         onAuthStateChanged(auth, async user => {
+            // Recheck access before revealing either the guide or briefing.
+            mainContent.classList.add('hidden');
+            authGate.classList.remove('hidden');
             if (user) {
                 gateStatus.textContent = 'Checking account status...';
                 const banned = await isUserBanned(user.uid);
@@ -369,6 +1058,7 @@
                 if (banned === false) {
                     authGate.classList.add('hidden');
                     mainContent.classList.remove('hidden');
+                    window.dispatchEvent(new Event('shd-content-ready'));
                 } else {
                     // banned check failed (unknown) - keep the gate up.
                     gateStatus.textContent = 'Could not verify account status. Please refresh to try again.';
@@ -408,7 +1098,7 @@
         const canvas = document.getElementById('neural-background');
         let scene, camera, renderer, particles;
         let animationFrameId;
-        const clock = new THREE.Clock();
+        const clock = typeof THREE !== 'undefined' ? new THREE.Clock() : null;
         var particleCount; // Use var for wider scope/hoisting
         var spacing; // Use var for wider scope/hoisting
 
@@ -528,8 +1218,9 @@
             }
         });
 
-        window.onload = function() {
+        window.addEventListener('load', function() {
             if (animationFrameId) cancelAnimationFrame(animationFrameId); // Clear any previous
+            if (!clock || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             try {
                 initBackground();
                 animateBackground();
@@ -537,7 +1228,7 @@
                 console.error("Failed to initialize 3D background:", e);
                 // Fallback or error message if needed
             }
-        };
+        });
     </script>
 </body>
 </html>
