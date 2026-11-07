@@ -1,8 +1,16 @@
 # Firebase Setup — SHD-CCP Website
 
-This site uses its **own** Firebase project, `shd-ccp-website`, separate from
-the shared `gitlabs-3e081` project used by the other BiochainAI sites. This
-keeps SHD-CCP's users, auth config, and any future data fully standalone.
+This site uses its **own** Firebase project, `shd-ccp-website`. Each BioChainAI
+site that signs visitors in has a project of its own, and none is shared:
+
+| Site | Firebase project | Configured in |
+| :--- | :--- | :--- |
+| SHD-CCP (this repository) | `shd-ccp-website` | `index.html` |
+| Owl-Academy | `owl-academy-6bce2` | `scripts/firebase/config.js` |
+| BioChain-AI | `biochain-ai` | `src/firebase/config.js` |
+| Ebayednoob | `ebayednoob-github` | `assets/js/firebase.js` |
+
+This keeps SHD-CCP's users, auth config, and any future data fully standalone.
 
 ## What's already configured
 
@@ -11,7 +19,15 @@ keeps SHD-CCP's users, auth config, and any future data fully standalone.
 - Authorized domain: the GitHub Pages domain has been added under
   Authentication → Settings → Authorized domains
 
-## Access control (login gate + ban list)
+## Sign-in gate and ban list (a preference, not access control)
+
+The gate decides what the homepage shows a visitor; it is not access control.
+Every page in this repository, including the guide, the Digital Seed briefing
+and the manual, is public: GitHub Pages serves the files to anyone, and guest
+browsing shows the same content without an account. Treat the gate and the ban
+list as a display preference for signed-in visitors. Anything that must be
+restricted belongs in Firestore (or another service) behind security rules, not
+behind this gate.
 
 `index.html` offers public guest browsing as well as Google Sign-In:
 
@@ -69,9 +85,10 @@ restricting it stops abuse from other origins):
   other BiochainAI sites.
 
 **3. Firestore / Storage rules** — the page reads one Firestore collection,
-`bannedUsers`, to enforce the ban list described above. Everything else is
-default-denied. Apply these rules exactly (Firebase Console → Firestore
-Database → Rules):
+`bannedUsers`, for the ban list described above. Everything else is
+default-denied. The rules live in this document only: the repository has no
+rules file and no workflow deploys them. Apply these rules exactly (Firebase
+Console → Firestore Database → Rules):
 
 ```
 // Firestore

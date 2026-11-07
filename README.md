@@ -8,13 +8,15 @@ The protocol, the reference engine, the language bindings, the application layer
 
 | Layer | Repository | Role |
 | :---: | :--- | :--- |
-| 0 | `SHD-CCP/geometric-engine-spec` | RFCs, golden test vectors, Lean 4 proofs. **The source of truth.** |
+| 0 | `SHD-CCP/geometric-engine-spec` | RFCs 00–06, golden test vectors, Lean 4 proofs. **The source of truth for the Geometric Engine.** |
 | 1 | `SHD-CCP/geometric-engine` | Python reference implementation and vector generator |
 | 2 | `SHD-CCP/geometric-engine-{c,rust,java,elixir,js}` | Native bindings, certified against the Layer 0 vectors |
-| 3 | `BioChain-AI/biochain` | Application and governance platform |
-| 4 | `Owl-Academy/geometric-engine-course` | Livebooks, simulators, walkthroughs |
+| 3 | `BioChain-AI/biochain` | Application and governance platform (aspirational; the working application is [BioChainAI/BioChain-AI](https://github.com/BioChainAI/BioChain-AI)) |
+| 4 | `Owl-Academy/geometric-engine-course` | Livebooks, simulators, walkthroughs (aspirational; the working course site is [BioChainAI/Owl-Academy](https://github.com/BioChainAI/Owl-Academy)) |
 
-These repositories are currently staged under [`Geometric_Engine/ecosystem/`](Geometric_Engine/ecosystem/). See [`Geometric_Engine/ecosystem/README.md`](Geometric_Engine/ecosystem/README.md) for the architecture, the conformance pipeline and how to split each folder into its own repo.
+These repositories are currently staged under [`Geometric_Engine/ecosystem/`](Geometric_Engine/ecosystem/); none has been split out or published yet. See [`Geometric_Engine/ecosystem/README.md`](Geometric_Engine/ecosystem/README.md) for the architecture, the conformance pipeline, how to split each folder into its own repo, and where the work lives today.
+
+RFC 07, the specification of the `shdccp/2` biochain stream that Owl-Academy grows, and its contract vectors live in [BioChainAI/SHD-CCP-core](https://github.com/BioChainAI/SHD-CCP-core) under CC0-1.0, except a fragment of `contract_vectors/schema.json` copied from this repository, which stays MIT (see SHD-CCP-core's `NOTICE`). This repository keeps RFCs 00–06 as they are. A `shdccp/2` stream packet is a 64-bit word, but it is not an RFC 01 tile ([RFC 07 section 14](https://github.com/BioChainAI/SHD-CCP-core/blob/main/rfcs/07_shdccp2_contract.md#14-identifiers-that-cannot-be-read-as-one-another-non-normative)).
 
 *The Geometric Engine of Time* is the title of the chronometric 5-tier orbital calculator module inside the engine (RFC 05).
 
@@ -30,7 +32,7 @@ These repositories are currently staged under [`Geometric_Engine/ecosystem/`](Ge
 
 ## Site setup
 
-See [`docs/FIREBASE_SETUP.md`](docs/FIREBASE_SETUP.md) for the sign-in gate and Firebase configuration.
+See [`docs/FIREBASE_SETUP.md`](docs/FIREBASE_SETUP.md) for the sign-in gate and Firebase configuration. The gate is a display preference, not access control: every page in this repository is public.
 
 ## Homepage development
 

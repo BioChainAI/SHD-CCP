@@ -79,3 +79,5 @@ It then locks the layout by storing the SHA-256 of `Bit_Allocation`. The linter 
 ## Open decision: Form ID position
 
 This registry puts the Form ID header at **bits 60–63**, as the kernel architecture specifies. The draft [RFC 01](../Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec/rfcs/01_einstein_tile_64bit.md) and the golden vectors, taken from the Geometric Engine tutorial, put it at **bits 36–39**, with the South Halo at 56–63. Those placements overlap the header. One convention has to win, and then the other side must be updated. The header position is a single setting, `header.bits` in `base_64bit_tile.json`.
+
+The `shdccp/2` stream packet also carries a 4-bit value at bits 60–63, always 9, but it is neither a kernel of this registry nor an RFC 01 tile. It is specified by RFC 07 in [BioChainAI/SHD-CCP-core](https://github.com/BioChainAI/SHD-CCP-core), and [RFC 07 section 14](https://github.com/BioChainAI/SHD-CCP-core/blob/main/rfcs/07_shdccp2_contract.md#14-identifiers-that-cannot-be-read-as-one-another-non-normative) explains why these 64-bit words cannot be read as one another.

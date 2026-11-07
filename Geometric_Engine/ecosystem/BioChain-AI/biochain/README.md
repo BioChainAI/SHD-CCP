@@ -2,6 +2,8 @@
 
 **Layer 3: the application and governance platform.** It is a decentralized neuro-symbolic system that runs on top of the SHD-CCP Geometric Engine.
 
+**Status: aspirational.** This folder is a directory skeleton staged inside SHD-CCP. The working BioChain application is [BioChainAI/BioChain-AI](https://github.com/BioChainAI/BioChain-AI), which does not use the Layer 2 bindings.
+
 ## Separation of concerns
 
 `biochain` is a **consumer** of the Layer 2 bindings. It depends on them only as versioned packages from Hex, crates.io and the other registries. It never vendors or reimplements the mathematical primitives. A bug found in a primitive is fixed upstream, in the spec (Layer 0) or a binding (Layer 2), and then picked up here by bumping the version.

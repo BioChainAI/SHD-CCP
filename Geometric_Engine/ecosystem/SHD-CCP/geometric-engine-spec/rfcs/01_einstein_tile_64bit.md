@@ -25,6 +25,8 @@ So far only these fields have a fixed position. Bit 0 is the least significant b
 
 Conforming decoders MUST extract `form_id = (tile >> 36) & 0xF` and `south_halo = tile >> 56`, and MUST treat `tile & 0x00FF_FF0F_FFFF_FFFF` as the payload.
 
+> **Informative note.** The `shdccp/2` stream packet is not an RFC 01 tile. It is also a 64-bit word, but it puts a constant form value 9 at bits 63..60 and a hash of its chunk at bits 55..24, and an RFC 01 decoder reads it as something else. It is specified by RFC 07, which lives in [BioChainAI/SHD-CCP-core](https://github.com/BioChainAI/SHD-CCP-core/blob/main/rfcs/07_shdccp2_contract.md) (CC0-1.0); [RFC 07 section 14](https://github.com/BioChainAI/SHD-CCP-core/blob/main/rfcs/07_shdccp2_contract.md#14-identifiers-that-cannot-be-read-as-one-another-non-normative) compares the two words. This note changes nothing in this RFC.
+
 ## Open items before this RFC can become normative
 
 - [ ] Position and semantics of the **Gate Byte**

@@ -23,6 +23,21 @@ Every conformance runner looks for the spec in this order:
 4. Results must match **bit for bit**. Approximate or floating-point comparisons are not allowed.
 5. A runner may read either the JSON or the `.bin` mirror. The two encode identical cases (see [`test_vectors/README.md`](test_vectors/README.md)).
 
+## How a runner finds the suites
+
+A runner does not keep its own list of suites. It reads every `test_vectors/*.json` file except `schema.json`, takes the suite's `suite` and `status` from the envelope, and then:
+
+| The binding has a handler for the suite | `status` | Result |
+| :--- | :--- | :--- |
+| either | `pending` | skipped |
+| yes | `normative` or `draft` | the cases run; a failing case fails the test run (for a draft suite this does not block certification, rule 2) |
+| no | `draft` | reported as skipped |
+| no | `normative` (or any other value) | **the run fails**, naming the suite |
+
+A handler whose suite file is missing also fails the run, and so does a file whose `suite` differs from its file name. A new normative suite therefore fails every binding until each one adds a handler (rule 1), and a new draft suite is reported until it does (rule 2).
+
+In this staging repository, CI checks each runner against both cases with [`scripts/check_suite_discovery.py`](../../scripts/check_suite_discovery.py), which adds a suite that no binding handles to a copy of `test_vectors/`.
+
 ## One command per ecosystem
 
 | Binding | Command |
@@ -36,10 +51,12 @@ Every conformance runner looks for the spec in this order:
 
 ## Badge
 
-A binding that passes may show this line in its README:
+A binding that passes every normative suite may show this line in its README:
 
 ```text
 SHD-CCP Spec v0.1.0: CONFORMANT
 ```
 
 The binding may then publish to its package registry. Re-certify on every spec release.
+
+Draft suites do not change the line (rule 2). The C runner prints it at the end of its run and counts any failing draft suites after it, for example `SHD-CCP Spec v0.1.0: CONFORMANT (draft suites failing: 1)`; the run still exits non-zero.

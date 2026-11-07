@@ -174,6 +174,21 @@ test('unverified account stays gated and banned account redirects', async ({ pag
   await expect(page).toHaveURL(/access-denied\.html$/);
 });
 
+test('the folder scanner starts empty and makes no request without a URL', async ({ page }) => {
+  await mockFirebase(page);
+  let githubRequests = 0;
+  await page.route('https://api.github.com/**', route => { githubRequests++; return route.abort(); });
+  await signIn(page);
+  await page.locator('[aria-controls="prompt-module-body"]').click();
+  await expect(page.locator('#github-folder-url')).toHaveValue('');
+  await page.locator('#builtin-prompt-select').selectOption('02_pseudo_fpga_form_modes.md');
+  await page.getByRole('button', { name: 'Scan', exact: true }).click();
+  await expect(page.locator('#github-scan-status')).toContainText('Enter a folder URL to scan');
+  await expect(page.locator('#builtin-prompt-select option')).toHaveCount(5);
+  await expect(page.locator('#prompt-markdown-viewer')).toHaveValue(/\S/);
+  expect(githubRequests).toBe(0);
+});
+
 test('remote Markdown selection loads text and a failed scan restores built-ins', async ({ page }) => {
   await mockFirebase(page);
   await page.route('**/prompt-manifest.json', route => route.fulfill({
