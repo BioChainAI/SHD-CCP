@@ -1,6 +1,6 @@
 # Runs every Geometric_Engine/ecosystem/ repository against the Layer 0 golden vectors while
 # they are staged together in this repo. Each folder also carries its own
-# .github/workflows/ci.yml for after it is split out.
+# .github/workflows/ci.yml, a template for after it is split out (it does not run here).
 name: Ecosystem conformance
 
 on:
@@ -16,6 +16,9 @@ permissions:
 
 env:
   GE_SPEC_DIR: ${{ github.workspace }}/Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec
+  # Adds a suite no binding handles to a copy of the vectors: the runner must fail on it as
+  # normative and skip it as draft (CONFORMANCE.md, "How a runner finds the suites").
+  CHECK_DISCOVERY: python3 ${{ github.workspace }}/Geometric_Engine/ecosystem/scripts/check_suite_discovery.py --
 
 jobs:
   reference:
@@ -25,20 +28,22 @@ jobs:
       run:
         working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.12"
       - run: pip install -e '.[test]'
       - run: pytest
       - run: python verification/export_golden_vectors.py --check
+      - name: Suite discovery
+        run: $CHECK_DISCOVERY pytest -q tests/test_conformance.py
 
   lean:
     name: Layer 0 · Lean 4 proofs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: leanprover/lean-action@v1
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: leanprover/lean-action@ba3fdfe5c4476c925da13bf11a005ddb47e47aee # v1.7.1
         with:
           lake-package-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec/formal/lean4
       - name: No sorry
@@ -51,10 +56,12 @@ jobs:
       run:
         working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-c
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
       - run: cmake --build build
       - run: ctest --test-dir build --output-on-failure
+      - name: Suite discovery
+        run: $CHECK_DISCOVERY sh -c 'build/test_conformance "$GE_SPEC_DIR/test_vectors"'
 
   rust:
     name: Layer 2 · Rust
@@ -63,10 +70,14 @@ jobs:
       run:
         working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-rust
     steps:
-      - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable branch
+        with:
+          toolchain: stable
       - run: cargo test
       - run: cargo build --no-default-features
+      - name: Suite discovery
+        run: $CHECK_DISCOVERY cargo test --test conformance
 
   java:
     name: Layer 2 · Java
@@ -75,12 +86,14 @@ jobs:
       run:
         working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-java
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           distribution: temurin
           java-version: "21"
       - run: mvn -B test
+      - name: Suite discovery
+        run: $CHECK_DISCOVERY mvn -B test
 
   elixir:
     name: Layer 2 · Elixir
@@ -89,13 +102,15 @@ jobs:
       run:
         working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-elixir
     steps:
-      - uses: actions/checkout@v5
-      - uses: erlef/setup-beam@v1
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
         with:
           elixir-version: "1.17"
           otp-version: "27"
       - run: mix format --check-formatted
       - run: mix test
+      - name: Suite discovery
+        run: $CHECK_DISCOVERY mix test
 
   js:
     name: Layer 2 · JavaScript
@@ -104,8 +119,10 @@ jobs:
       run:
         working-directory: Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-js
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
       - run: npm test
+      - name: Suite discovery
+        run: $CHECK_DISCOVERY npm test

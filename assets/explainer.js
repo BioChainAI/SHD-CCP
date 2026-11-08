@@ -1076,9 +1076,15 @@
             const select = document.getElementById('builtin-prompt-select');
             if (!input || !status || !select) return;
             const request = ++promptScanRequest;
+            const folderUrl = input.value.trim();
+            if (!folderUrl) {
+                restoreBuiltinPromptOptions();
+                status.textContent = 'Enter a folder URL to scan. Using the five bundled prompts.';
+                return;
+            }
             status.textContent = 'Scanning for Markdown prompts…';
             try {
-                const response = await fetch(explainerPromptUrl(input.value.trim()));
+                const response = await fetch(explainerPromptUrl(folderUrl));
                 if (!response.ok) throw new Error('HTTP ' + response.status);
                 const data = await response.json();
                 if (!Array.isArray(data)) throw new Error('Use a GitHub Contents API or JSON manifest URL.');

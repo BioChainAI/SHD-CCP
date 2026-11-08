@@ -1,3 +1,8 @@
+# TEMPLATE for after this folder is split into its own repository (Geometric_Engine/ecosystem/README.md).
+# GitHub runs only the workflows at the root of a repository, so this file does not run while the
+# folder is staged inside SHD-CCP. Meanwhile SHD-CCP's .github/workflows/ecosystem-conformance.yml
+# runs its checks.
+
 name: conformance
 
 on:
@@ -16,10 +21,10 @@ jobs:
           - elixir: "1.17"
             otp: "27"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           submodules: true
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1.24.1
         with:
           elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}

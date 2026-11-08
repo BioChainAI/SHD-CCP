@@ -1,6 +1,6 @@
 # SHD-CCP / geometric-engine-java
 
-**Layer 2: Java 21+ / JVM binding** of the SHD-CCP Geometric Engine. Publishes to **Maven Central (`io.github.shd-ccp:geometric-engine`)**.
+**Layer 2: Java 21+ / JVM binding** of the SHD-CCP Geometric Engine. Will publish to **Maven Central (`io.github.shd-ccp:geometric-engine`)**.
 
 ```text
 SHD-CCP Spec v0.1.0: CONFORMANT
@@ -15,6 +15,8 @@ SHD-CCP Spec v0.1.0: CONFORMANT
 | Exact 128-bit Gram-TQF collinearity | 02 | `gram_tqf_collinearity` |
 
 ## Install
+
+Not published yet. Until the first release, build and test this folder from source (below).
 
 ```xml
 <dependency>

@@ -3,8 +3,10 @@
 
     python verification/export_golden_vectors.py [--out DIR] [--check]
 
---check regenerates into memory/a temp dir and fails if the committed vectors
-differ, so the spec can never drift from the reference implementation.
+--check regenerates into a temp dir and fails if a committed vector differs or
+is missing, or if the directory holds a file this exporter does not write (other
+than the hand-written README.md and schema.json), so the spec can never drift
+from the reference implementation.
 """
 
 import argparse
@@ -18,6 +20,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 from geometric_engine import vectors  # noqa: E402
 
 DEFAULT_OUT = pathlib.Path(__file__).resolve().parents[2] / "geometric-engine-spec" / "test_vectors"
+
+# Hand-written files that live beside the generated vectors.
+HAND_WRITTEN = frozenset({"README.md", "schema.json"})
 
 
 def export(out: pathlib.Path) -> list[str]:
@@ -35,7 +40,7 @@ def export(out: pathlib.Path) -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=pathlib.Path, default=DEFAULT_OUT)
-    ap.add_argument("--check", action="store_true", help="verify committed vectors are up to date")
+    ap.add_argument("--check", action="store_true", help="verify the committed vectors are up to date and that no other files sit beside them")
     args = ap.parse_args()
 
     if not args.check:
@@ -44,10 +49,16 @@ def main() -> int:
         return 0
 
     with tempfile.TemporaryDirectory() as tmp:
-        stale = [f for f in export(pathlib.Path(tmp))
+        written = export(pathlib.Path(tmp))
+        stale = [f for f in written
                  if not (args.out / f).exists() or not filecmp.cmp(pathlib.Path(tmp) / f, args.out / f, shallow=False)]
+    known = HAND_WRITTEN.union(written)
+    unknown = sorted(p.name for p in args.out.iterdir() if p.name not in known) if args.out.is_dir() else []
     if stale:
         print("stale golden vectors (re-run export_golden_vectors.py):", *stale, sep="\n  ")
+    if unknown:
+        print("files export_golden_vectors.py does not write (generate them here, or remove them):", *unknown, sep="\n  ")
+    if stale or unknown:
         return 1
     print("golden vectors up to date")
     return 0

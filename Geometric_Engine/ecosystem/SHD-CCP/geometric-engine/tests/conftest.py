@@ -16,6 +16,14 @@ def _spec_vectors_dir():
     return None
 
 
+def pytest_generate_tests(metafunc):
+    """Give every suite in test_vectors/ its own `suite_file` test case (CONFORMANCE.md: runners enumerate suites)."""
+    if "suite_file" in metafunc.fixturenames:
+        d = _spec_vectors_dir()
+        files = sorted(p for p in d.glob("*.json") if p.name != "schema.json") if d else []
+        metafunc.parametrize("suite_file", files or [None], ids=[p.stem for p in files] or ["spec-not-found"])
+
+
 @pytest.fixture(scope="session")
 def vectors_dir():
     d = _spec_vectors_dir()

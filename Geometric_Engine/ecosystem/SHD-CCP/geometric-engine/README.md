@@ -25,10 +25,11 @@ SHD-CCP Spec v0.1.0: CONFORMANT
 pip install -e '.[test]'
 pytest                                          # unit and conformance tests
 python verification/export_golden_vectors.py    # regenerate ../geometric-engine-spec/test_vectors
-python verification/export_golden_vectors.py --check   # fail if committed vectors are stale
+python verification/export_golden_vectors.py --check   # fail if committed vectors are stale or missing,
+                                                        # or if test_vectors/ holds a file it does not write
 ```
 
-The conformance tests find the spec at `$GE_SPEC_DIR`, then `./spec`, then `../geometric-engine-spec`.
+The conformance tests find the spec at `$GE_SPEC_DIR`, then `./spec`, then `../geometric-engine-spec`, and run every suite in its `test_vectors/` (see [`CONFORMANCE.md`](../geometric-engine-spec/CONFORMANCE.md)).
 
 ## Verification scripts
 

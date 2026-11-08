@@ -14,7 +14,7 @@
             <h2 id="tile">What a tile looks like</h2>
 
             <p>
-                Before understanding the pipeline, you need to see the data format. The default kernel layout is the <strong>Blackwell Block</strong>&mdash;seven fields packed into exactly 64 bits. Every field is classified by its role in the 8&times;8 spatial projector grid: <strong>HALO</strong> fields sit in the border rows and carry structural metadata, the <strong>CORE</strong> field is the quaternion vine at the center, and <strong>STANDARD</strong> fields fill the remaining space with stream-specific data.
+                Before understanding the pipeline, you need to see the data format. The kernel layout this overview describes is the <strong>Blackwell Block</strong>&mdash;seven fields packed into exactly 64 bits. Every field is classified by its role in the 8&times;8 spatial projector grid: <strong>HALO</strong> fields sit in the border rows and carry structural metadata, the <strong>CORE</strong> field is the quaternion vine at the center, and <strong>STANDARD</strong> fields fill the remaining space with stream-specific data.
             </p>
 
             <div class="table-wrap" role="region" aria-label="Blackwell Block field layout" tabindex="0"><table class="doc-table">
@@ -28,8 +28,13 @@
                 <tr><td><code>Amplitude ID</code></td><td>INT4</td><td>3</td><td style="color:#27ae60;font-weight:bold;">STANDARD</td><td>Tags the amplitude level of the data stream at this tile.</td></tr>
             </table></div>
 
+            <div class="admonition note" role="note">
+                <span class="admonition-title">Descriptive, not normative</span>
+                This section describes the Blackwell Block as a design. It is not a specification: none of the SHD-CCP RFCs defines these fields, and nothing here constrains other kernels. The specified 64-bit tile is the draft <a href="../Geometric_Engine/ecosystem/SHD-CCP/geometric-engine-spec/rfcs/01_einstein_tile_64bit.md">RFC 01</a>, whose layout is not frozen. The <code>shdccp/2</code> stream packet in Owl-Academy's biochains has the same fields and widths in the same order, but holds other values in them: a hash of its chunk in bits 55&ndash;24, the chunk length in bits 23&ndash;8 and a byte checksum in bits 7&ndash;0. That packet is specified by RFC 07 in <a href="https://github.com/BioChainAI/SHD-CCP-core">BioChainAI/SHD-CCP-core</a>, and it is not an RFC 01 tile (<a href="https://github.com/BioChainAI/SHD-CCP-core/blob/main/rfcs/07_shdccp2_contract.md#14-identifiers-that-cannot-be-read-as-one-another-non-normative">RFC 07 section 14</a>).
+            </div>
+
             <p>
-                The Blackwell Block is the <em>default</em> kernel, not the only one. The kernel is modular: custom field definitions can be loaded as long as the total stays at 64 bits and the Comp. Quaternion core is present&mdash;because the quaternion chain is what the hyperbolic system builds on for temporal data. Full details, the 8&times;8 projector grid layout, and modularity rules are on the <a href="einstein-tile.html">Einstein Tile</a> page.
+                The Blackwell Block is one kernel design, not the only one. The kernel is modular: custom field definitions can be loaded as long as the total stays at 64 bits. A kernel does not have to carry a quaternion field; the kernels in the <a href="../SHD-CCP_Kernel_Ontology/README.md">Kernel Ontology</a> define their own fields. Full details, the 8&times;8 projector grid layout, and modularity rules are planned for the <a href="einstein-tile.html">Einstein Tile</a> page.
             </p>
 
             <h2 id="dataflow">How data moves through the pipeline</h2>
@@ -104,11 +109,11 @@
             </p>
 
             <p>
-                <strong>The quaternion vine is sacred.</strong> The 32-bit Comp. Quaternion is the CORE field&mdash;it takes half the tile because it <em>is</em> the temporal backbone. Every chain of tiles is linked through its quaternion; the hyperbolic system grows from this vine. Custom kernel definitions can rearrange the other 32 bits however they need to, but the quaternion core must be present.
+                <strong>The quaternion vine (Blackwell Block).</strong> In the Blackwell Block design, the 32-bit Comp. Quaternion is the CORE field&mdash;it takes half the tile because it is meant as the temporal backbone. Every chain of Blackwell tiles is linked through its quaternion; the hyperbolic system grows from this vine. This describes that one design; other kernels define their own fields and need not carry a quaternion.
             </p>
 
             <p>
-                <strong>Compact numeric formats, not raw floats.</strong> The kernel uses FP4 for the quaternion core and FP16 for the payload scale&mdash;compressed floating-point formats chosen for density, not IEEE-754 doubles. Geometry tests (TQF collinearity) still operate on integer quadrance; the compressed formats serve the vine chain and cross-scale normalization.
+                <strong>Compact numeric formats, not raw floats.</strong> The Blackwell Block design describes FP4 for the quaternion core and FP16 for the payload scale&mdash;compressed floating-point formats chosen for density, not IEEE-754 doubles. Geometry tests (TQF collinearity) still operate on integer quadrance; the compressed formats serve the vine chain and cross-scale normalization.
             </p>
 
             <p>
@@ -129,7 +134,7 @@
 
             <div class="admonition note">
                 <span class="admonition-title">Claim status</span>
-                The principles above mix established mathematics (rational trigonometry, quaternion groups, D3 knot symmetry, 720&deg; spinor periodicity) with design-stage conjectures (prime-quadrance sieve detection, soliton crystallization). The detail chapters are planned; future additions should state claim status and supporting evidence explicitly.
+                The principles above mix established mathematics (rational trigonometry, quaternion groups, D3 knot symmetry, 720&deg; spinor periodicity) with design-stage conjectures (prime-quadrance sieve detection, soliton crystallization). The Blackwell Block layout and the worked example describe a design; they are not specifications. The detail chapters are planned; future additions should state claim status and supporting evidence explicitly.
             </div>
 
             <h2 id="where-next">Where to go from here</h2>

@@ -160,7 +160,7 @@
                         From a <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400">64-bit register</span> to a geometric model
                     </h2>
                     <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        Explore how the Symbolic High-Dimensional Context-Compression Protocol (SHD-CCP) represents a 64-bit word as a 4×4×4 grid. Follow a packet through the proposed architecture, flip individual bits, and compare example geometric mappings. Start with the pipeline, then try the cube and torus controls.
+                        Explore how the Symbolic High-Dimensional Context-Compression Protocol (SHD-CCP) represents a 64-bit word as a 4×4×4 grid. Follow a packet through the proposed architecture, flip individual bits, and compare example geometric mappings. Start with the pipeline, then try the cube and torus controls. These are design models: the <code class="text-cyan-300">shdccp/2</code> stream packet in Owl-Academy's biochains is a different 64-bit word, not an RFC 01 tile, and RFC 07 in <a href="https://github.com/BioChainAI/SHD-CCP-core" class="underline underline-offset-4">BioChainAI/SHD-CCP-core</a> specifies it.
                     </p>
                 </div>
 
@@ -774,10 +774,10 @@
                         <div class="glass-sub p-4 rounded-2xl space-y-3">
                             <label for="github-folder-url" class="text-xs font-mono text-cyan-300 block">2. GITHUB REPOSITORY FOLDER MARKDOWN SCANNER</label>
                             <p class="text-[11px] text-slate-400">
-                                Point to a JSON folder manifest or GitHub Contents API URL (<code class="text-cyan-300">./prompts</code>) or GitHub Contents API URL (<code class="text-cyan-300">https://api.github.com/repos/{owner}/{repo}/contents/prompts</code>) to dynamically populate `.md` prompts:
+                                Optional: enter a GitHub Contents API folder URL (<code class="text-cyan-300">https://api.github.com/repos/{owner}/{repo}/contents/{folder}</code>), or any HTTPS URL or path on this site that returns a JSON list of <code class="text-cyan-300">{name, download_url}</code> entries, to list more `.md` prompts. With no URL, the five built-in prompts stay selected:
                             </p>
                             <div class="flex gap-2">
-                                <input id="github-folder-url" aria-label="GitHub Contents API folder URL" type="text" value="https://api.github.com/repos/BioChainAI/SHD-CCP/contents/prompts" placeholder="https://api.github.com/repos/user/shd-ccp/contents/prompts" class="flex-1 bg-slate-900 text-xs font-mono text-slate-200 border border-slate-700 rounded-xl px-3 py-2">
+                                <input id="github-folder-url" aria-label="GitHub Contents API folder URL" type="text" value="" placeholder="https://api.github.com/repos/{owner}/{repo}/contents/{folder}" class="flex-1 bg-slate-900 text-xs font-mono text-slate-200 border border-slate-700 rounded-xl px-3 py-2">
                                 <button onclick="scanGithubPromptsFolder()" class="px-3 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono cursor-pointer">Scan</button>
                             </div>
                             <div role="status" id="github-scan-status" class="text-[11px] font-mono text-slate-400">Ready. Five built-in prompts are available without a network request.</div>
@@ -1020,6 +1020,9 @@
         }
 
         // --- BAN LIST CHECK ---
+        // The gate and ban list are a display preference, not access control:
+        // every page is public, and guest browsing shows the same content
+        // (docs/FIREBASE_SETUP.md).
         // Ban list lives in Firestore (bannedUsers/{uid}) so it can be
         // managed from the Firebase console without redeploying the site.
         // Firestore rules only allow a signed-in user to read their own

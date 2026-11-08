@@ -1,4 +1,15 @@
-/* Runs libgengine against geometric-engine-spec/test_vectors/*.bin (SHDGEV01). */
+/* Runs libgengine against every suite in geometric-engine-spec/test_vectors/.
+ *
+ * The suites are discovered from the .json files in test_vectors/ (CONFORMANCE.md): each file's
+ * "suite" and "status" are read, a suite with a handler below runs against its SHDGEV01 .bin mirror, a
+ * normative suite without a handler fails, a draft suite without a handler is reported as
+ * skipped, and a pending suite is skipped. A handler whose suite is missing also fails.
+ *
+ * The verdict line covers the normative suites only (CONFORMANCE.md rule 2). A failing draft case
+ * is reported next to the verdict and still makes the run exit non-zero. */
+#define _POSIX_C_SOURCE 200809L
+
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,6 +55,7 @@ static int load(const char *dir, const char *suite, uint32_t want_fields, vector
     if (!raw || !v->data || fread(raw, 8, n, f) != n) {
         fprintf(stderr, "%s: truncated\n", path);
         free(raw);
+        free(v->data);
         fclose(f);
         return -1;
     }
@@ -99,12 +111,129 @@ static int gram_tqf(const char *dir) {
     return report("gram_tqf_collinearity", v.count, bad);
 }
 
+static const struct {
+    const char *suite;
+    int (*run)(const char *dir);
+} handlers[] = {
+    {"einstein_tiles_forms_0_15", einstein_tiles},
+    {"garner_crt_881_883_887", garner_crt},
+    {"gram_tqf_collinearity", gram_tqf},
+};
+#define N_HANDLERS (sizeof handlers / sizeof handlers[0])
+
+/* ── Suite discovery ─────────────────────────────────────────────────────────── */
+
+static char *read_text(const char *path) {
+    FILE *f = fopen(path, "rb");
+    if (!f) return NULL;
+    size_t cap = 1 << 16, len = 0;
+    char *buf = malloc(cap + 1);
+    size_t got;
+    while (buf && (got = fread(buf + len, 1, cap - len, f)) > 0) {
+        len += got;
+        if (len == cap) {
+            char *bigger = realloc(buf, 2 * cap + 1);
+            if (!bigger) { free(buf); buf = NULL; break; }
+            buf = bigger;
+            cap *= 2;
+        }
+    }
+    fclose(f);
+    if (buf) buf[len] = '\0';
+    return buf;
+}
+
+/* Reads a top-level string member of a suite envelope. Only the text before the "cases" member
+ * is searched, so a key inside a case object is never taken for an envelope key. */
+static int envelope_string(const char *json, const char *key, char *out, size_t outlen) {
+    const char *end = strstr(json, "\"cases\"");
+    size_t keylen = strlen(key);
+    for (const char *p = json; (p = strstr(p, "\"")) != NULL && (!end || p < end); p++) {
+        if (strncmp(p + 1, key, keylen) != 0 || p[1 + keylen] != '"') continue;
+        const char *before = p;
+        while (before > json && strchr(" \t\r\n", before[-1])) before--;
+        if (before == json || (before[-1] != '{' && before[-1] != ',')) continue;
+        const char *q = p + keylen + 2;
+        while (*q && strchr(" \t\r\n", *q)) q++;
+        if (*q++ != ':') continue;
+        while (*q && strchr(" \t\r\n", *q)) q++;
+        if (*q++ != '"') return -1;
+        size_t n = 0;
+        while (q[n] && q[n] != '"' && q[n] != '\\') n++;
+        if (q[n] != '"' || n >= outlen) return -1;
+        memcpy(out, q, n);
+        out[n] = '\0';
+        return 0;
+    }
+    return -1;
+}
+
+static int by_name(const void *a, const void *b) {
+    return strcmp(*(char *const *)a, *(char *const *)b);
+}
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         fprintf(stderr, "usage: %s <geometric-engine-spec/test_vectors>\n", argv[0]);
         return 2;
     }
-    int failed = einstein_tiles(argv[1]) + garner_crt(argv[1]) + gram_tqf(argv[1]);
-    printf("SHD-CCP Spec v%s: %s\n", GENGINE_SPEC_VERSION, failed ? "NON-CONFORMANT" : "CONFORMANT");
-    return failed != 0;
+    const char *dir = argv[1];
+    DIR *d = opendir(dir);
+    if (!d) { perror(dir); return 2; }
+    char **names = NULL;
+    size_t count = 0;
+    for (struct dirent *e; (e = readdir(d)) != NULL;) {
+        size_t len = strlen(e->d_name);
+        if (len <= 5 || strcmp(e->d_name + len - 5, ".json") != 0 || strcmp(e->d_name, "schema.json") == 0) continue;
+        char **grown = realloc(names, (count + 1) * sizeof *names);
+        if (!grown || !(grown[count] = strdup(e->d_name))) { perror("discovery"); return 2; }
+        names = grown;
+        count++;
+    }
+    closedir(d);
+    if (count) qsort(names, count, sizeof *names, by_name);
+
+    int failed = 0, draft_failed = 0;
+    int seen[N_HANDLERS] = {0};
+    for (size_t i = 0; i < count; i++) {
+        char path[4096], suite[256], status[64];
+        snprintf(path, sizeof path, "%s/%s", dir, names[i]);
+        char *json = read_text(path);
+        int ok = json && envelope_string(json, "suite", suite, sizeof suite) == 0 &&
+                 envelope_string(json, "status", status, sizeof status) == 0;
+        free(json);
+        size_t stem = strlen(names[i]) - 5;
+        if (!ok || strlen(suite) != stem || strncmp(suite, names[i], stem) != 0) {
+            printf("%-28s cannot read its suite and status  FAIL\n", names[i]);
+            failed++;
+            continue;
+        }
+        size_t h = 0;
+        while (h < N_HANDLERS && strcmp(handlers[h].suite, suite) != 0) h++;
+        if (h < N_HANDLERS) seen[h] = 1;
+        if (strcmp(status, "pending") == 0) {
+            printf("%-28s pending      skipped\n", suite);
+        } else if (h < N_HANDLERS) {
+            int bad = handlers[h].run(dir);
+            if (strcmp(status, "draft") == 0) draft_failed += bad;
+            else failed += bad;
+        } else if (strcmp(status, "draft") == 0) {
+            printf("%-28s no handler for draft suite  skipped\n", suite);
+        } else {
+            printf("%-28s no handler for this %s suite  FAIL\n", suite, status);
+            failed++;
+        }
+    }
+    for (size_t h = 0; h < N_HANDLERS; h++) {
+        if (!seen[h]) {
+            printf("%-28s not found in %s  FAIL\n", handlers[h].suite, dir);
+            failed++;
+        }
+    }
+    for (size_t i = 0; i < count; i++) free(names[i]);
+    free(names);
+    printf("SHD-CCP Spec v%s: %s", GENGINE_SPEC_VERSION, failed ? "NON-CONFORMANT" : "CONFORMANT");
+    if (draft_failed) printf(" (draft suites failing: %d)", draft_failed);
+    printf("\n");
+    return failed + draft_failed != 0;
 }
